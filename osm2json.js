@@ -99,7 +99,7 @@ Osmium.Callbacks.multipolygon = function() {
         type: "Feature",
         geometry: {
             type: "MultiPolygon",
-            coordinates: this.geom.as_array
+            coordinates: this.geom.as_wkt ? this.geos_as_array : undefined // working around segfault when invoking as_array on invalid geometry
         },
         properties: {
             osm_type: this.from,
