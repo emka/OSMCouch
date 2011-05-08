@@ -18,14 +18,13 @@ Osmium.Callbacks.end = function() {
 
 Osmium.Callbacks.node = function() {
     output = {
+        id: 'node'+this.id,
         type: "Feature",
         geometry: {
             type: "Point",
             coordinates: this.geom.as_array
         },
         properties: {
-            osm_type: 'node',
-            osm_id: this.id,
             version: this.version,
             timestamp: this.timestamp,
             uid: this.uid,
@@ -45,14 +44,13 @@ Osmium.Callbacks.node = function() {
 
 Osmium.Callbacks.way = function() {
     output = {
+        id: 'way'+this.id,
         type: "Feature",
         geometry: {
             type: "LineString",
             coordinates: this.geom.as_array
         },
         properties: {
-            osm_type: 'way',
-            osm_id: this.id,
             version: this.version,
             timestamp: this.timestamp,
             uid: this.uid,
@@ -73,10 +71,9 @@ Osmium.Callbacks.way = function() {
 
 Osmium.Callbacks.relation = function() {
     output = {
+        id: 'relation'+this.id,
         members: this.members,
         properties: {
-            osm_type: 'relation',
-            osm_id: this.id,
             version: this.version,
             timestamp: this.timestamp,
             uid: this.uid,
@@ -96,14 +93,13 @@ Osmium.Callbacks.relation = function() {
 
 Osmium.Callbacks.multipolygon = function() {
     output = {
+        id: 'mp_'+this.from+this.id,
         type: "Feature",
         geometry: {
             type: "MultiPolygon",
-            coordinates: this.geom.as_wkt ? this.geos_as_array : undefined // working around segfault when invoking as_array on invalid geometry
+            coordinates: this.geom.as_array
         },
         properties: {
-            osm_type: this.from,
-            osm_id: this.id,
             version: this.version,
             timestamp: this.timestamp,
             uid: this.uid,
