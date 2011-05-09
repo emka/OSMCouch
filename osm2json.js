@@ -92,27 +92,26 @@ Osmium.Callbacks.relation = function() {
 }
 
 Osmium.Callbacks.multipolygon = function() {
-    output = {
-        id: 'mp_'+this.from+this.id,
-        type: "Feature",
-        geometry: {
-            type: "MultiPolygon",
-            coordinates: this.geom.as_array
-        },
-        properties: {
-            version: this.version,
-            timestamp: this.timestamp,
-            uid: this.uid,
-            user: this.user,
-            changeset: this.changeset,
-            tags: this.tags,
+    geom = this.geom.as_array;
+    if (geom != undefined) {
+        output = {
+            id: 'mp_'+this.from+this.id,
+            type: "Feature",
+            geometry: {
+                type: "MultiPolygon",
+                coordinates: geom
+            },
+            properties: {
+                timestamp: this.timestamp,
+                tags: this.tags,
+            }
+        };
+        if (first_object) {
+            first_object = false;
         }
-    };
-    if (first_object) {
-        first_object = false;
+        else {
+            jsonfile.print(',');
+        }
+        jsonfile.print(JSON.stringify(output));
     }
-    else {
-        jsonfile.print(',');
-    }
-    jsonfile.print(JSON.stringify(output));
 }
