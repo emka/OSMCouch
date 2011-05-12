@@ -18,7 +18,7 @@ Osmium.Callbacks.end = function() {
 
 Osmium.Callbacks.node = function() {
     output = {
-        id: 'node'+this.id,
+        _id: 'node'+this.id,
         type: "Feature",
         geometry: {
             type: "Point",
@@ -44,7 +44,7 @@ Osmium.Callbacks.node = function() {
 
 Osmium.Callbacks.way = function() {
     output = {
-        id: 'way'+this.id,
+        _id: 'way'+this.id,
         type: "Feature",
         geometry: {
             type: "LineString",
@@ -71,7 +71,7 @@ Osmium.Callbacks.way = function() {
 
 Osmium.Callbacks.relation = function() {
     output = {
-        id: 'relation'+this.id,
+        _id: 'relation'+this.id,
         members: this.members,
         properties: {
             version: this.version,
@@ -95,7 +95,7 @@ Osmium.Callbacks.multipolygon = function() {
     geom = this.geom.as_array;
     if (geom != undefined) {
         output = {
-            id: 'mp_'+this.from+this.id,
+            _id: 'mp_'+this.from+this.id,
             type: "Feature",
             geometry: {
                 type: "MultiPolygon",
