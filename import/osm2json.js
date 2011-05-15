@@ -94,11 +94,17 @@ Osmium.Callbacks.relation = function() {
 Osmium.Callbacks.multipolygon = function() {
     geom = this.geom.as_array;
     if (geom != undefined) {
+        if (this.from === "way") {
+            type = "Polygon";
+        }
+        else {
+            type = "MultiPolygon";
+        }
         output = {
             _id: 'mp_'+this.from+this.id,
             type: "Feature",
             geometry: {
-                type: "MultiPolygon",
+                type: type,
                 coordinates: geom
             },
             properties: {
