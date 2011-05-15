@@ -1,0 +1,18 @@
+body {
+  padding:4px;
+}
+
+h1 {
+  margin-top:0;
+}
+
+#header {
+  width:600px;
+  margin:0 auto;
+}
+
+#header h1 {
+  font-size:5em;
+  text-align:center;
+  margin:0;
+}
