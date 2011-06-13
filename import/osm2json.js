@@ -5,7 +5,6 @@ var jsonfile;
 var first_object = true;
 
 Osmium.Callbacks.init = function() {
-    print('Start!');
     jsonfile = Osmium.Output.CSV.open('bulk.json'); // normal file handler, "CSV" contains no separator if print() gets only one argument
     jsonfile.print('{"docs":[');
 }
@@ -13,11 +12,10 @@ Osmium.Callbacks.init = function() {
 Osmium.Callbacks.end = function() {
     jsonfile.print(']}');
     jsonfile.close();
-    print('End!');
 }
 
 Osmium.Callbacks.node = function() {
-    output = {
+    var output = {
         _id: 'node'+this.id,
         type: "Feature",
         geometry: {
@@ -43,7 +41,7 @@ Osmium.Callbacks.node = function() {
 }
 
 Osmium.Callbacks.way = function() {
-    output = {
+    var output = {
         _id: 'way'+this.id,
         type: "Feature",
         geometry: {
@@ -60,17 +58,12 @@ Osmium.Callbacks.way = function() {
             nodes: this.nodes
         }
     };
-    if (first_object) {
-        first_object = false;
-    }
-    else {
-        jsonfile.print(',');
-    }
+    jsonfile.print(',');
     jsonfile.print(JSON.stringify(output));
 }
 
 Osmium.Callbacks.relation = function() {
-    output = {
+    var output = {
         _id: 'relation'+this.id,
         members: this.members,
         properties: {
@@ -82,17 +75,12 @@ Osmium.Callbacks.relation = function() {
             tags: this.tags
         }
     };
-    if (first_object) {
-        first_object = false;
-    }
-    else {
-        jsonfile.print(',');
-    }
+    jsonfile.print(',');
     jsonfile.print(JSON.stringify(output));
 }
 
 Osmium.Callbacks.multipolygon = function() {
-    geom = this.geom.as_array;
+    var geom = this.geom.as_array;
     if (geom != undefined) {
         if (this.from === "way") {
             type = "Polygon";
@@ -100,7 +88,7 @@ Osmium.Callbacks.multipolygon = function() {
         else {
             type = "MultiPolygon";
         }
-        output = {
+        var output = {
             _id: 'mp_'+this.from+this.id,
             type: "Feature",
             geometry: {
@@ -112,12 +100,7 @@ Osmium.Callbacks.multipolygon = function() {
                 tags: this.tags,
             }
         };
-        if (first_object) {
-            first_object = false;
-        }
-        else {
-            jsonfile.print(',');
-        }
+        jsonfile.print(',');
         jsonfile.print(JSON.stringify(output));
     }
 }
