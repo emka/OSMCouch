@@ -1,0 +1,319 @@
+{"docs":[
+{"_id":"meta","timestamp":"Mon Jun 13 2011 15:31:54 GMT+0200 (CEST)"}
+,
+{"_id":"node25186326","type":"Feature","geometry":{"type":"Point","coordinates":[7.4334971,43.7470338]},"version":3,"properties":{"amenity":"police"}}
+,
+{"_id":"node25191432","type":"Feature","geometry":{"type":"Point","coordinates":[7.4271582,43.7313463]},"version":2,"properties":{"amenity":"parking","parking":"underground"}}
+,
+{"_id":"node25230434","type":"Feature","geometry":{"type":"Point","coordinates":[7.4118228,43.7285497]},"version":1,"properties":{"amenity":"fuel","created_by":"JOSM"}}
+,
+{"_id":"node25237989","type":"Feature","geometry":{"type":"Point","coordinates":[7.4114082,43.7304054]},"version":4,"properties":{"amenity":"hospital"}}
+,
+{"_id":"node25239187","type":"Feature","geometry":{"type":"Point","coordinates":[7.4260899,43.7398344]},"version":2,"properties":{"amenity":"parking"}}
+,
+{"_id":"node25239188","type":"Feature","geometry":{"type":"Point","coordinates":[7.4214856,43.7357595]},"version":2,"properties":{"amenity":"parking","created_by":"Potlatch 0.4c"}}
+,
+{"_id":"node25239189","type":"Feature","geometry":{"type":"Point","coordinates":[7.423852,43.7326942]},"version":4,"properties":{"amenity":"parking"}}
+,
+{"_id":"node25239190","type":"Feature","geometry":{"type":"Point","coordinates":[7.4291932,43.7453091]},"version":2,"properties":{"amenity":"parking","created_by":"Potlatch 0.4c"}}
+,
+{"_id":"node25239191","type":"Feature","geometry":{"type":"Point","coordinates":[7.4179845,43.73096]},"version":3,"properties":{"amenity":"parking"}}
+,
+{"_id":"node25246504","type":"Feature","geometry":{"type":"Point","coordinates":[7.4346146,43.7475222]},"version":3,"properties":{"amenity":"parking"}}
+,
+{"_id":"node251611700","type":"Feature","geometry":{"type":"Point","coordinates":[7.4225986,43.7391215]},"version":2,"properties":{"amenity":"parking"}}
+,
+{"_id":"node251625765","type":"Feature","geometry":{"type":"Point","coordinates":[7.4204491,43.7344894]},"version":1,"properties":{"amenity":"police","created_by":"JOSM"}}
+,
+{"_id":"node251625766","type":"Feature","geometry":{"type":"Point","coordinates":[7.4207219,43.7342579]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node251625767","type":"Feature","geometry":{"type":"Point","coordinates":[7.4201873,43.7324238]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node251626687","type":"Feature","geometry":{"type":"Point","coordinates":[7.417506,43.7293404]},"version":2,"properties":{"amenity":"parking","created_by":"Potlatch 0.7b"}}
+,
+{"_id":"node251626688","type":"Feature","geometry":{"type":"Point","coordinates":[7.4146664,43.7279493]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node251626689","type":"Feature","geometry":{"type":"Point","coordinates":[7.419355,43.7253051]},"version":6,"properties":{"aeroway":"helipad","amenity":"airport","name":"Héliport de Monaco"}}
+,
+{"_id":"node251626690","type":"Feature","geometry":{"type":"Point","coordinates":[7.41868,43.7256485]},"version":2,"properties":{"amenity":"parking"}}
+,
+{"_id":"node251629518","type":"Feature","geometry":{"type":"Point","coordinates":[7.4164589,43.7282736]},"version":2,"properties":{"amenity":"fuel","created_by":"Potlatch 0.7b"}}
+,
+{"_id":"node251737344","type":"Feature","geometry":{"type":"Point","coordinates":[7.4162441,43.7366396]},"version":1,"properties":{"amenity":"fuel","created_by":"JOSM"}}
+,
+{"_id":"node251737644","type":"Feature","geometry":{"type":"Point","coordinates":[7.4177319,43.7370642]},"version":1,"properties":{"amenity":"police","created_by":"JOSM"}}
+,
+{"_id":"node252357162","type":"Feature","geometry":{"type":"Point","coordinates":[7.4104377,43.7297205]},"version":2,"properties":{"amenity":"parking"}}
+,
+{"_id":"node252357163","type":"Feature","geometry":{"type":"Point","coordinates":[7.4113931,43.7302221]},"version":3,"properties":{"amenity":"parking"}}
+,
+{"_id":"node252363250","type":"Feature","geometry":{"type":"Point","coordinates":[7.4334129,43.7469766]},"version":3,"properties":{"amenity":"post_office"}}
+,
+{"_id":"node252365278","type":"Feature","geometry":{"type":"Point","coordinates":[7.4255848,43.7392502]},"version":3,"properties":{"amenity":"parking","created_by":"Potlatch 0.10f"}}
+,
+{"_id":"node252366663","type":"Feature","geometry":{"type":"Point","coordinates":[7.4272971,43.7397803]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node252366664","type":"Feature","geometry":{"type":"Point","coordinates":[7.4273426,43.7398327]},"version":1,"properties":{"amenity":"police","created_by":"JOSM"}}
+,
+{"_id":"node252367324","type":"Feature","geometry":{"type":"Point","coordinates":[7.4193692,43.7326524]},"version":1,"properties":{"created_by":"JOSM","shop":"kiosk"}}
+,
+{"_id":"node252369941","type":"Feature","geometry":{"type":"Point","coordinates":[7.4189504,43.7328703]},"version":2,"properties":{"shop":"convenience"}}
+,
+{"_id":"node252369944","type":"Feature","geometry":{"type":"Point","coordinates":[7.4188721,43.7329906]},"version":3,"properties":{"name":"L'Epi d'Or","shop":"bakery"}}
+,
+{"_id":"node252369946","type":"Feature","geometry":{"type":"Point","coordinates":[7.4192368,43.7327261]},"version":2,"properties":{"name":"Boucherie des Arcades","shop":"butcher"}}
+,
+{"_id":"node252369950","type":"Feature","geometry":{"type":"Point","coordinates":[7.4191031,43.7326931]},"version":1,"properties":{"amenity":"cafe","created_by":"JOSM"}}
+,
+{"_id":"node252369952","type":"Feature","geometry":{"type":"Point","coordinates":[7.4193491,43.7327572]},"version":1,"properties":{"amenity":"cafe","created_by":"JOSM","name":"Café Place d'Armes"}}
+,
+{"_id":"node252369955","type":"Feature","geometry":{"type":"Point","coordinates":[7.4194396,43.7327763]},"version":2,"properties":{"amenity":"restaurant","created_by":"JOSM","name":"Pizza Pino"}}
+,
+{"_id":"node252369958","type":"Feature","geometry":{"type":"Point","coordinates":[7.4196301,43.7328311]},"version":1,"properties":{"amenity":"cafe","created_by":"JOSM"}}
+,
+{"_id":"node252369961","type":"Feature","geometry":{"type":"Point","coordinates":[7.4193348,43.7325953]},"version":1,"properties":{"amenity":"fountain","created_by":"JOSM"}}
+,
+{"_id":"node252377861","type":"Feature","geometry":{"type":"Point","coordinates":[7.4213918,43.7329977]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node252377863","type":"Feature","geometry":{"type":"Point","coordinates":[7.4181714,43.7285944]},"version":2,"properties":{"cafe":"cafe","shop":"bakery"}}
+,
+{"_id":"node252379646","type":"Feature","geometry":{"type":"Point","coordinates":[7.4218988,43.7321209]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node252379647","type":"Feature","geometry":{"type":"Point","coordinates":[7.4206094,43.7349194]},"version":2,"properties":{"amenity":"library"}}
+,
+{"_id":"node252379648","type":"Feature","geometry":{"type":"Point","coordinates":[7.4185163,43.7341333]},"version":2,"properties":{"amenity":"pharmacy","created_by":"JOSM"}}
+,
+{"_id":"node252379649","type":"Feature","geometry":{"type":"Point","coordinates":[7.4187471,43.7328234]},"version":3,"properties":{"amenity":"pharmacy","name":"Pharmacie Ferry"}}
+,
+{"_id":"node252381921","type":"Feature","geometry":{"type":"Point","coordinates":[7.416622,43.7299917]},"version":3,"properties":{"amenity":"cafe","created_by":"Potlatch 0.7b"}}
+,
+{"_id":"node252381923","type":"Feature","geometry":{"type":"Point","coordinates":[7.4168773,43.7301446]},"version":4,"properties":{"amenity":"pharmacy"}}
+,
+{"_id":"node252387324","type":"Feature","geometry":{"type":"Point","coordinates":[7.4253307,43.7376769]},"version":1,"properties":{"amenity":"hospital","created_by":"JOSM"}}
+,
+{"_id":"node252387903","type":"Feature","geometry":{"type":"Point","coordinates":[7.4214813,43.7336995]},"version":2,"properties":{"shop":"kiosk"}}
+,
+{"_id":"node252457993","type":"Feature","geometry":{"type":"Point","coordinates":[7.4195749,43.7281539]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node252476381","type":"Feature","geometry":{"type":"Point","coordinates":[7.4313506,43.7430871]},"version":3,"properties":{"name":"Grimaldi Forum","tourism":"attraction"}}
+,
+{"_id":"node252476690","type":"Feature","geometry":{"type":"Point","coordinates":[7.4308723,43.7423407]},"version":1,"properties":{"created_by":"Potlatch 0.7b","name":"Jardin Japonais","tourism":"attraction"}}
+,
+{"_id":"node252476876","type":"Feature","geometry":{"type":"Point","coordinates":[7.4304775,43.743122]},"version":1,"properties":{"created_by":"Potlatch 0.7b","name":"Musee National","tourism":"attraction"}}
+,
+{"_id":"node252478186","type":"Feature","geometry":{"type":"Point","coordinates":[7.430591,43.741597]},"version":2,"properties":{"amenity":"fuel"}}
+,
+{"_id":"node252539777","type":"Feature","geometry":{"type":"Point","coordinates":[7.4182877,43.7279797]},"version":3,"properties":{"amenity":"place_of_worship","created_by":"Potlatch 0.7b","name":"Église de Fontvieille","religion":"christian"}}
+,
+{"_id":"node252539796","type":"Feature","geometry":{"type":"Point","coordinates":[7.4179919,43.7280832]},"version":1,"properties":{"amenity":"post_office","created_by":"Potlatch 0.7b"}}
+,
+{"_id":"node252540209","type":"Feature","geometry":{"type":"Point","coordinates":[7.4188158,43.7262969]},"version":1,"properties":{"created_by":"Potlatch 0.7b","name":"Chapiteau","tourism":"attraction"}}
+,
+{"_id":"node252540481","type":"Feature","geometry":{"type":"Point","coordinates":[7.4177859,43.7308556]},"version":2,"properties":{"amenity":"fast_food","created_by":"Potlatch 0.7b"}}
+,
+{"_id":"node252540503","type":"Feature","geometry":{"type":"Point","coordinates":[7.4173348,43.7309627]},"version":3,"properties":{"tourism":"viewpoint"}}
+,
+{"_id":"node252541627","type":"Feature","geometry":{"type":"Point","coordinates":[7.418639,43.7324458]},"version":2,"properties":{"amenity":"restaurant","name":"Monte-Carlo Bar"}}
+,
+{"_id":"node252541628","type":"Feature","geometry":{"type":"Point","coordinates":[7.4178633,43.7319958]},"version":2,"properties":{"amenity":"fuel"}}
+,
+{"_id":"node252542296","type":"Feature","geometry":{"type":"Point","coordinates":[7.4150638,43.7313317]},"version":3,"properties":{"tourism":"viewpoint"}}
+,
+{"_id":"node254516786","type":"Feature","geometry":{"type":"Point","coordinates":[7.4178169,43.7274829]},"version":2,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node263083098","type":"Feature","geometry":{"type":"Point","coordinates":[7.4219545,43.7274856]},"version":2,"properties":{"amenity":"pub","created_by":"JOSM","name":"Ship & Castle"}}
+,
+{"_id":"node263083100","type":"Feature","geometry":{"type":"Point","coordinates":[7.4218815,43.7275559]},"version":1,"properties":{"amenity":"cafe","created_by":"JOSM","name":"La Casa Del Gelato"}}
+,
+{"_id":"node263083102","type":"Feature","geometry":{"type":"Point","coordinates":[7.4212891,43.7281699]},"version":1,"properties":{"amenity":"cafe","created_by":"JOSM","name":"Gerhard's Café"}}
+,
+{"_id":"node263090177","type":"Feature","geometry":{"type":"Point","coordinates":[7.4383964,43.7491116]},"version":2,"properties":{"amenity":"fountain"}}
+,
+{"_id":"node263090184","type":"Feature","geometry":{"type":"Point","coordinates":[7.4343254,43.7475259]},"version":2,"properties":{"amenity":"cafe","name":"Ariston"}}
+,
+{"_id":"node265021378","type":"Feature","geometry":{"type":"Point","coordinates":[7.4157032,43.7292711]},"version":1,"properties":{"amenity":"atm","created_by":"JOSM"}}
+,
+{"_id":"node265022223","type":"Feature","geometry":{"type":"Point","coordinates":[7.4213861,43.7369855]},"version":1,"properties":{"amenity":"parking","created_by":"JOSM"}}
+,
+{"_id":"node265022224","type":"Feature","geometry":{"type":"Point","coordinates":[7.4202029,43.73601]},"version":1,"properties":{"amenity":"atm","created_by":"JOSM"}}
+,
+{"_id":"node265023435","type":"Feature","geometry":{"type":"Point","coordinates":[7.4275139,43.7393624]},"version":1,"properties":{"amenity":"fountain","created_by":"Potlatch 0.9a"}}
+,
+{"_id":"node265023534","type":"Feature","geometry":{"type":"Point","coordinates":[7.4263037,43.7392074]},"version":1,"properties":{"amenity":"cinema","created_by":"Potlatch 0.9a"}}
+,
+{"_id":"node265023583","type":"Feature","geometry":{"type":"Point","coordinates":[7.4245434,43.7389682]},"version":1,"properties":{"amenity":"atm","created_by":"JOSM"}}
+,
+{"_id":"node265023595","type":"Feature","geometry":{"type":"Point","coordinates":[7.4255653,43.7385679]},"version":2,"properties":{"amenity":"post_office"}}
+,
+{"_id":"node267885777","type":"Feature","geometry":{"type":"Point","coordinates":[7.427968,43.7409138]},"version":3,"properties":{"created_by":"Potlatch 0.9c","name":"Metropole","tourism":"hotel"}}
+,
+{"_id":"node267885802","type":"Feature","geometry":{"type":"Point","coordinates":[7.4282233,43.7415467]},"version":3,"properties":{"amenity":"bank","created_by":"Potlatch 0.9c","name":"UBS"}}
+,
+{"_id":"node267885935","type":"Feature","geometry":{"type":"Point","coordinates":[7.4257261,43.7415271]},"version":6,"properties":{"name":"Marché U","shop":"supermarket"}}
+,
+{"_id":"node267898764","type":"Feature","geometry":{"type":"Point","coordinates":[7.4287882,43.7413692]},"version":4,"properties":{"amenity":"parking","name":"Metropole"}}
+,
+{"_id":"node267901435","type":"Feature","geometry":{"type":"Point","coordinates":[7.4257905,43.7329221]},"version":4,"properties":{"amenity":"pub","name":"Stars n Bars"}}
+,
+{"_id":"node267901522","type":"Feature","geometry":{"type":"Point","coordinates":[7.423213,43.7325605]},"version":2,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.9c","name":"La Rascasse"}}
+,
+{"_id":"node267901573","type":"Feature","geometry":{"type":"Point","coordinates":[7.4239019,43.7326575]},"version":4,"properties":{"amenity":"restaurant","name":"Quai des Artistes"}}
+,
+{"_id":"node267904158","type":"Feature","geometry":{"type":"Point","coordinates":[7.4250905,43.7398476]},"version":2,"properties":{"amenity":"bank","created_by":"Potlatch 0.9c","name":"Credit Suisse"}}
+,
+{"_id":"node268112380","type":"Feature","geometry":{"type":"Point","coordinates":[7.4284732,43.7412498]},"version":1,"properties":{"amenity":"atm","created_by":"Potlatch 0.9c"}}
+,
+{"_id":"node268113123","type":"Feature","geometry":{"type":"Point","coordinates":[7.4283959,43.741163]},"version":2,"properties":{"created_by":"Potlatch 0.9c","name":"Spar","shop":"supermarket"}}
+,
+{"_id":"node268113334","type":"Feature","geometry":{"type":"Point","coordinates":[7.4282243,43.7412436]},"version":2,"properties":{"name":"FNAC","shop":"electronics"}}
+,
+{"_id":"node268113343","type":"Feature","geometry":{"type":"Point","coordinates":[7.4293481,43.7430526]},"version":4,"properties":{"shop":"convenience;doityourself"}}
+,
+{"_id":"node268113500","type":"Feature","geometry":{"type":"Point","coordinates":[7.4274346,43.7421365]},"version":3,"properties":{"shop":"hairdresser"}}
+,
+{"_id":"node268113501","type":"Feature","geometry":{"type":"Point","coordinates":[7.4272716,43.7420249]},"version":1,"properties":{"amenity":"atm","created_by":"Potlatch 0.9c"}}
+,
+{"_id":"node268166861","type":"Feature","geometry":{"type":"Point","coordinates":[7.4253842,43.7403733]},"version":4,"properties":{"amenity":"bank","created_by":"Potlatch 0.9c","name":"Barcleys"}}
+,
+{"_id":"node268166909","type":"Feature","geometry":{"type":"Point","coordinates":[7.4252627,43.7409657]},"version":1,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.9c","name":"Terrazino"}}
+,
+{"_id":"node268665524","type":"Feature","geometry":{"type":"Point","coordinates":[7.4261637,43.7329965]},"version":3,"properties":{"amenity":"bank","name":"ubs"}}
+,
+{"_id":"node272949867","type":"Feature","geometry":{"type":"Point","coordinates":[7.4357535,43.7483135]},"version":2,"properties":{"created_by":"Potlatch 0.9c","name":"Le Meridien Beach Plaza","tourism":"hotel"}}
+,
+{"_id":"node272952255","type":"Feature","geometry":{"type":"Point","coordinates":[7.4299715,43.7399034]},"version":3,"properties":{"name":"Fairmont","tourism":"hotel"}}
+,
+{"_id":"node274497719","type":"Feature","geometry":{"type":"Point","coordinates":[7.4170275,43.7307036]},"version":1,"properties":{"created_by":"Potlatch 0.9c","name":"carrefour","shop":"supermarket"}}
+,
+{"_id":"node274497925","type":"Feature","geometry":{"type":"Point","coordinates":[7.4167443,43.730133]},"version":1,"properties":{"created_by":"Potlatch 0.9c","name":"digatlon","shop":"outdoor"}}
+,
+{"_id":"node274499413","type":"Feature","geometry":{"type":"Point","coordinates":[7.4296044,43.743373]},"version":2,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node274499623","type":"Feature","geometry":{"type":"Point","coordinates":[7.4295245,43.7429081]},"version":2,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.9c"}}
+,
+{"_id":"node274499808","type":"Feature","geometry":{"type":"Point","coordinates":[7.429533,43.7427034]},"version":1,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.9c"}}
+,
+{"_id":"node274500242","type":"Feature","geometry":{"type":"Point","coordinates":[7.420435,43.7323099]},"version":1,"properties":{"amenity":"restaurant","created_by":"Potlatch 0.9c","name":"pizzeria monegasque"}}
+,
+{"_id":"node280486703","type":"Feature","geometry":{"type":"Point","coordinates":[7.4251442,43.7313244]},"version":1,"properties":{"amenity":"school","created_by":"Potlatch 0.10","name":"Lycée Albert Ier"}}
+,
+{"_id":"node280487234","type":"Feature","geometry":{"type":"Point","coordinates":[7.419548,43.7321679]},"version":2,"properties":{"amenity":"toilets","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node280487253","type":"Feature","geometry":{"type":"Point","coordinates":[7.4197197,43.7321058]},"version":1,"properties":{"amenity":"police","created_by":"Potlatch 0.10","name":"Commissariat de la Condamine"}}
+,
+{"_id":"node280487301","type":"Feature","geometry":{"type":"Point","coordinates":[7.4215651,43.7316035]},"version":1,"properties":{"amenity":"toilets","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node280487439","type":"Feature","geometry":{"type":"Point","coordinates":[7.423728,43.730791]},"version":3,"properties":{"amenity":"townhall","name":"Mairie"}}
+,
+{"_id":"node280487944","type":"Feature","geometry":{"type":"Point","coordinates":[7.4212132,43.7368874]},"version":2,"properties":{"amenity":"post_box","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node280488046","type":"Feature","geometry":{"type":"Point","coordinates":[7.4213162,43.7369618]},"version":1,"properties":{"amenity":"telephone","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node280488322","type":"Feature","geometry":{"type":"Point","coordinates":[7.4242359,43.7375]},"version":2,"properties":{"amenity":"hospital","name":"Institut Monégasque de Médecine du Sport"}}
+,
+{"_id":"node280489204","type":"Feature","geometry":{"type":"Point","coordinates":[7.4271698,43.7428901]},"version":1,"properties":{"amenity":"school","created_by":"Potlatch 0.10","name":"École Saint-Charles"}}
+,
+{"_id":"node280489306","type":"Feature","geometry":{"type":"Point","coordinates":[7.4270239,43.7416685]},"version":1,"properties":{"amenity":"post_box","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node280489587","type":"Feature","geometry":{"type":"Point","coordinates":[7.4284058,43.743628]},"version":1,"properties":{"amenity":"pharmacy","created_by":"Potlatch 0.10","name":"Pharmacie des Moulins"}}
+,
+{"_id":"node280490127","type":"Feature","geometry":{"type":"Point","coordinates":[7.424921,43.7395787]},"version":1,"properties":{"amenity":"post_box","created_by":"Potlatch 0.10"}}
+,
+{"_id":"node321647302","type":"Feature","geometry":{"type":"Point","coordinates":[7.4218369,43.7338617]},"version":2,"properties":{"amenity":"restaurant","name":"Brasserie de Monaco"}}
+,
+{"_id":"node456208106","type":"Feature","geometry":{"type":"Point","coordinates":[7.4297957,43.7344974]},"version":1,"properties":{"amenity":"parking","parking":"multi-storey"}}
+,
+{"_id":"node456208109","type":"Feature","geometry":{"type":"Point","coordinates":[7.4292354,43.7339751]},"version":1,"properties":{"amenity":"parking","parking":"multi-storey"}}
+,
+{"_id":"node456208111","type":"Feature","geometry":{"type":"Point","coordinates":[7.4299885,43.7347194]},"version":1,"properties":{"tourism":"information"}}
+,
+{"_id":"node456295834","type":"Feature","geometry":{"type":"Point","coordinates":[7.4222543,43.73162]},"version":1,"properties":{"amenity":"fountain"}}
+,
+{"_id":"node477550981","type":"Feature","geometry":{"type":"Point","coordinates":[7.4280178,43.7424511]},"version":1,"properties":{"amenity":"atm"}}
+,
+{"_id":"node477555074","type":"Feature","geometry":{"type":"Point","coordinates":[7.4259492,43.7394064]},"version":1,"properties":{"amenity":"cafe","name":"Häagen Dasz"}}
+,
+{"_id":"node477617730","type":"Feature","geometry":{"type":"Point","coordinates":[7.4284555,43.742296]},"version":2,"properties":{"amenity":"parking"}}
+,
+{"_id":"node626514976","type":"Feature","geometry":{"type":"Point","coordinates":[7.4241936,43.7325097]},"version":3,"properties":{"addr:city":"Monaco","addr:country":"MC","addr:housenumber":"4","addr:postcode":"98000","addr:street":"Quai Antoine 1er","name":"Salle d'Exposition","tourism":"museum"}}
+,
+{"_id":"node745763718","type":"Feature","geometry":{"type":"Point","coordinates":[7.4272222,43.7396709]},"version":1,"properties":{"amenity":"taxi"}}
+,
+{"_id":"node897654574","type":"Feature","geometry":{"type":"Point","coordinates":[7.427851,43.743312]},"version":1,"properties":{"addr:housenumber":"3","addr:street":"Avenue saint laurent","amenity":"restaurant","name":"Wine O Clock","phone":"+37797975744"}}
+,
+{"_id":"node917978746","type":"Feature","geometry":{"type":"Point","coordinates":[7.4274075,43.7402697]},"version":1,"properties":{"amenity":"bench"}}
+,
+{"_id":"node917978761","type":"Feature","geometry":{"type":"Point","coordinates":[7.4256832,43.7403651]},"version":1,"properties":{"amenity":"fountain"}}
+,
+{"_id":"node917978763","type":"Feature","geometry":{"type":"Point","coordinates":[7.4216664,43.7311665]},"version":1,"properties":{"amenity":"cafe","name":"Snack Bar La Pampa"}}
+,
+{"_id":"node917978765","type":"Feature","geometry":{"type":"Point","coordinates":[7.4202713,43.7305819]},"version":1,"properties":{"tourism":"viewpoint"}}
+,
+{"_id":"node918052396","type":"Feature","geometry":{"type":"Point","coordinates":[7.422266,43.7392477]},"version":1,"properties":{"name":"Novotel","tourism":"hotel"}}
+,
+{"_id":"node918118123","type":"Feature","geometry":{"type":"Point","coordinates":[7.4289436,43.7389859]},"version":2,"properties":{"amenity":"bench"}}
+,
+{"_id":"node918118132","type":"Feature","geometry":{"type":"Point","coordinates":[7.4234064,43.7311488]},"version":2,"properties":{"amenity":"place_of_worship","denomination":"catholic","name":"Chapelle des Pénitents","religion":"christian"}}
+,
+{"_id":"node941678579","type":"Feature","geometry":{"type":"Point","coordinates":[7.417762,43.731717]},"version":1,"properties":{"amenity":"bus_station","name":"Place d'armes"}}
+,
+{"_id":"node941681450","type":"Feature","geometry":{"type":"Point","coordinates":[7.41829,43.731534]},"version":1,"properties":{"amenity":"Lift","description":"Centre comercial - Place d'armes"}}
+,
+{"_id":"node941732168","type":"Feature","geometry":{"type":"Point","coordinates":[7.429194,43.745394]},"version":1,"properties":{"amenity":"bus_station","created_by":"iLOE 1.8","name":"Blvd des Moulins"}}
+,
+{"_id":"node941733363","type":"Feature","geometry":{"type":"Point","coordinates":[7.429563,43.745378]},"version":1,"properties":{"amenity":"bus_station","name":"Blvd des Moulins"}}
+,
+{"_id":"node941738044","type":"Feature","geometry":{"type":"Point","coordinates":[7.422653,43.732321]},"version":1,"properties":{"amenity":"bus_station"}}
+,
+{"_id":"node942389511","type":"Feature","geometry":{"type":"Point","coordinates":[7.4261275,43.7410437]},"version":2,"properties":{"amenity":"bus_station"}}
+,
+{"_id":"node946757745","type":"Feature","geometry":{"type":"Point","coordinates":[7.425629,43.740798]},"version":1,"properties":{"amenity":"bank","name":"BNP"}}
+,
+{"_id":"node946763510","type":"Feature","geometry":{"type":"Point","coordinates":[7.425967,43.740781]},"version":1,"properties":{"amenity":"post_box"}}
+,
+{"_id":"node954710927","type":"Feature","geometry":{"type":"Point","coordinates":[7.421936,43.7336218]},"version":2,"properties":{"amenity":"restaurant","name":"Chez Edgar"}}
+,
+{"_id":"node954712775","type":"Feature","geometry":{"type":"Point","coordinates":[7.421586,43.73503]},"version":1,"properties":{"amenity":"bank","name":"Societe Generale"}}
+,
+{"_id":"node954713831","type":"Feature","geometry":{"type":"Point","coordinates":[7.421016,43.735333]},"version":1,"properties":{"name":"Casino","shop":"convenience"}}
+,
+{"_id":"node954714337","type":"Feature","geometry":{"type":"Point","coordinates":[7.420995,43.735523]},"version":1,"properties":{"amenity":"pharmacy"}}
+,
+{"_id":"node967714511","type":"Feature","geometry":{"type":"Point","coordinates":[7.4271771,43.7419592]},"version":1,"properties":{"amenity":"restaurant"}}
+,
+{"_id":"node995175662","type":"Feature","geometry":{"type":"Point","coordinates":[7.420397,43.728519]},"version":1,"properties":{"addr:housenumber":"28","addr:street":"Quai Jean Charrles Rey","amenity":"restaurant","name":"La Saliere","phone":"00377 92 05 25 82","url":"www.lasaliere.mc"}}
+,
+{"_id":"node1031563224","type":"Feature","geometry":{"type":"Point","coordinates":[7.4242034,43.729622]},"version":1,"properties":{"tourism":"viewpoint"}}
+,
+{"_id":"node1079045434","type":"Feature","geometry":{"type":"Point","coordinates":[7.4176259,43.7319569]},"version":1,"properties":{"amenity":"parking","name":"Parking de la Colle"}}
+,
+{"_id":"node1079750194","type":"Feature","geometry":{"type":"Point","coordinates":[7.4260355,43.7407333]},"version":1,"properties":{"name":"Office du Tourisme de Monaco","tourism":"information"}}
+,
+{"_id":"node1094735869","type":"Feature","geometry":{"type":"Point","coordinates":[7.4183499,43.7344211]},"version":1,"properties":{"amenity":"post_office","name":"Poste La Condamine"}}
+,
+{"_id":"node1094737560","type":"Feature","geometry":{"type":"Point","coordinates":[7.4188863,43.7328746]},"version":1,"properties":{"amenity":"pharmacy","name":"Pharmacie Marsan"}}
+,
+{"_id":"node1204288491","type":"Feature","geometry":{"type":"Point","coordinates":[7.4284626,43.7385154]},"version":1,"properties":{"amenity":"bench"}}
+,
+{"_id":"node1279818099","type":"Feature","geometry":{"type":"Point","coordinates":[7.424154,43.7336697]},"version":1,"properties":{"amenity":"fuel"}}
+,
+{"_id":"node1279818337","type":"Feature","geometry":{"type":"Point","coordinates":[7.4206103,43.7262056]},"version":1,"properties":{"aeroway":"helipad","amenity":"airport","name":"Héliport de Monaco"}}
+,
+{"_id":"node1306031292","type":"Feature","geometry":{"type":"Point","coordinates":[7.4180875,43.7328256]},"version":1,"properties":{"amenity":"restaurant","cuisine":"italian","name":"P&P"}}
+,
+{"_id":"node1306031293","type":"Feature","geometry":{"type":"Point","coordinates":[7.4182028,43.7327752]},"version":1,"properties":{"name":"Hotel Ambassador","tourism":"hotel"}}
+,
+{"_id":"node1306034043","type":"Feature","geometry":{"type":"Point","coordinates":[7.4209708,43.7369342]},"version":1,"properties":{"amenity":"cafe","cuisine":"ice_cream","name":"La Gelateria"}}
+,
+{"_id":"node1306034044","type":"Feature","geometry":{"type":"Point","coordinates":[7.4195493,43.7322345]},"version":1,"properties":{"amenity":"bus_station","name":"Place d'Armes"}}
+,
+{"_id":"node1306034045","type":"Feature","geometry":{"type":"Point","coordinates":[7.4211586,43.7368509]},"version":1,"properties":{"amenity":"bus_station","name":"Sainte-Dévote"}}
+,
+{"_id":"node1306034046","type":"Feature","geometry":{"type":"Point","coordinates":[7.4185274,43.7343683]},"version":1,"properties":{"amenity":"bus_station","name":"Princesse Florestine"}}
+,
+{"_id":"node1306034047","type":"Feature","geometry":{"type":"Point","coordinates":[7.4202922,43.732219]},"version":1,"properties":{"amenity":"bus_station","name":"Place d'Armes"}}
+,
+{"_id":"node1306037369","type":"Feature","geometry":{"type":"Point","coordinates":[7.4202965,43.7335118]},"version":1,"properties":{"addr:housenumber":"2","addr:postcode":"98000","addr:street":"rue des Orangers","amenity":"restaurant","cuisine":"sushi","name":"My Sushi","website":"http://www.mysushi.com/"}}
+,
+{"_id":"way112681615","type":"Feature","geometry":{"type":"LineString","coordinates":[[7.4310975,43.7447119],[7.4311458,43.7447933],[7.4312477,43.7448204],[7.4313013,43.7448049],[7.4312691,43.74477],[7.4313067,43.7447119],[7.4312531,43.744615],[7.4311619,43.7445918],[7.4310975,43.7447119]]},"version":1,"properties":{"amenity":"swimming_pool"}}
+]}
