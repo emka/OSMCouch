@@ -45,7 +45,6 @@ import os
 import xml.sax
 import xml.sax.handler
 from datetime import datetime
-import monetdb.sql
 
 import settings
 
@@ -92,42 +91,6 @@ class OSCReader(xml.sax.handler.ContentHandler):
                 self.consumer.way(self.mode, id, version, timestamp, uid, user, changeset, self.nodes, self.tags)
             elif name == "relation":
                 self.consumer.relation(self.mode, id, version, timestamp, uid, user, changeset, self.members, self.tags)
-
-
-def interleave(x, y):
-    '''Calculate interleaved Morton code from x and y''' 
-    # http://www.codexon.com/posts/morton-codes
-    result = 0
-    position = 0
-    bit = 1
- 
-    while bit <= x or bit <= y:
- 
-        if bit & x:
-            result |= 1 << (2*position+1)
-        if bit & y:
-            result |= 1 << (2*position)
- 
-        position += 1
-        bit = 1 << position
- 
-    return result
-
-
-def zcurve(long, lat):
-    '''Calculate zcurve index from position.'''
-
-    long = float(long) + 180 # always positive, leads to more dense result
-    if long < 0 or long >= 360: # out of range
-        long = 0
-    long = int(long)
-
-    lat = float(lat) + 90
-    if lat < 0 or lat >= 180:
-        lat = 0
-    lat = int(lat)
-
-    return interleave(long, lat)
 
 
 class Updater(object):
