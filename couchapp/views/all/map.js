@@ -1,7 +1,7 @@
 /**
- * A simple map function mocking _all, but allows usage with lists etc.
+ * Simple map function mocking _all, including _id as key. Allows usage with lists, etc.
  * 
  */
 function(doc) {
-  emit(doc.id, doc);
+  emit(doc._id, doc);
 }

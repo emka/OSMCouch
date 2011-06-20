@@ -1,6 +1,7 @@
 /**
  * This function outputs OSM XML.
  * http://wiki.openstreetmap.org/wiki/XML#OSM_XML_file_format
+ * http://wiki.openstreetmap.org/wiki/Data_Primitives
  * 
  * @author Mitja Kleider
  */
