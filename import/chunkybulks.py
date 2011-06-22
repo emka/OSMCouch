@@ -20,6 +20,7 @@ def main():
         return
     FILE = sys.argv[1]
     DB_NAME = sys.argv[2]
+    print('Uploading to {0}'.format(DB_NAME))
     bulksize = 10000
     f = open(FILE, 'r')
 

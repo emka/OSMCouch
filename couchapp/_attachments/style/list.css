@@ -1,0 +1,68 @@
+@charset "utf-8";
+
+#objects {
+    list-style-type:none;
+    padding:0;
+}
+
+#objects li {
+    margin-bottom:1em;
+    border:1px dashed grey;
+    padding:.5em;
+    background:#eee;
+    -moz-border-radius:1em;
+    -moz-box-shadow:2px 4px 4px #ddd;
+    border-radius:1em;
+    box-shadow:2px 4px 4px #ddd;
+}
+
+#objects li:hover {
+    background:transparent;
+}
+
+#objects li li {
+    margin-bottom:0;
+    border:none;
+    background:transparent;
+    padding:.1em;
+    -moz-border-radius:none;
+    -moz-box-shadow:none;
+    border-radius:none;
+    box-shadow:none;
+}
+
+#permalink {
+    position:fixed;
+    bottom:.5em;
+    right:.5em;
+}
+
+.tags {
+    font-size:smaller;
+}
+
+.osm {
+    width:0;
+    height:20px;
+    padding-left:20px;
+    overflow:hidden;
+    background:url(../images/osm_logo_small.png) no-repeat;
+    float: left;
+    margin-right:1em;
+}
+
+.osm:hover {
+    width:auto;
+    height:auto;
+    padding:0;
+    overflow:visible;
+    background:transparent;
+    float:none;
+    margin-right:0;
+}
+
+.adr {
+  padding:.3em;
+  font-size:smaller;
+  color:#333;
+}

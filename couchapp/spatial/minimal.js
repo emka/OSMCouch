@@ -1,5 +1,5 @@
 /**
- * A simple spatial view that emits only the GeoJSON object further values.   
+ * A simple spatial view that emits only the geometry without further values.   
  */
 function(doc){
 	if(doc.geometry){

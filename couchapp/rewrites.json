@@ -1,0 +1,51 @@
+[
+    {
+        "from": "favicon.ico",
+        "to": "favicon.ico",
+        "method": "GET"
+    },
+    {
+        "from": "style/*",
+        "to": "style/*",
+        "method": "GET"
+    },
+    {
+        "from": "script/*",
+        "to": "script/*",
+        "method": "GET"
+    },
+    {
+        "from": "images/*",
+        "to": "images/*",
+        "method": "GET"
+    },
+    {
+        "from": "locales/*",
+        "to": "locales/*",
+        "method": "GET"
+    },
+    {
+        "from": "",
+        "to": "index.html",
+        "method": "GET"
+    },
+    {
+        "from": "map.html",
+        "to": "map.html",
+        "method": "GET"
+    },
+    {
+        "from": "geojson/*",
+        "to": "_spatial/_list/geojson/*",
+        "method": "GET"
+    },
+    {
+        "from": "list/*",
+        "to": "_spatial/_list/html/*",
+        "method": "GET"
+    },
+    {
+        "from": "object/*",
+        "to": "../../*"
+    }
+]
