@@ -14,7 +14,7 @@ is_area = function(tags) {
     if (tags['office']) return true;
     if (tags['boundary']) return true;
     if (tags['landuse']) return true;
-    if (tags['leisure'] && !tags['leisure'] === "track") return true;
+    if (tags['leisure'] && !(tags['leisure'] === "track")) return true;
     if (tags['place']) return true;
     if (tags['waterway'] && tags['waterway'] === "riverbank") return true;
     if (tags['highway'] && tags['highway'] === "services") return true;
@@ -29,7 +29,7 @@ is_area = function(tags) {
     if (tags['historic']) return true;
     if (tags['military']) return true;
     if (tags['natural'] && !(tags['natural'] === "coastline" || tags['natural'] === "cliff")) return true;
-    if (tags['tourism'] && !tags['tourism'] === "artwork") return true;
+    if (tags['tourism'] && !(tags['tourism'] === "artwork")) return true;
     if (tags['ele']) return true;
     if (tags['geological']) return true;
     // FIXME man_made
