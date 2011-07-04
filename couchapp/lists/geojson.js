@@ -22,8 +22,18 @@ function(head, req) {
         for (var key in req.query) {
             if (key === 'bbox')
                 continue; // skip bbox parameter
-            else if (!(row.value[key] && (row.value[key] === req.query[key] || req.query[key] === '' || req.query[key] === '*'))) { // tag is not present
+            else if (!row.value[key] || ((req.query[key].indexOf('|') === -1) && !(row.value[key] === req.query[key] || req.query[key] === '' || req.query[key] === '*'))) { // tag is not present
                     omit = true;
+                    break; // do not check further filter tags
+            }
+            else if(row.value[key] && (req.query[key].indexOf('|') != -1)) { // multiple value options
+                omit = true;
+                var values = req.query[key].split('|');
+                for (var i=0; i<values.length; i++) { // values in OR mode
+                    if (row.value[key] === values[i])
+                        omit = false;
+                }
+                if (omit) // no possible value matched
                     break; // do not check further filter tags
             }
         }
