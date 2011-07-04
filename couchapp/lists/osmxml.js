@@ -23,8 +23,8 @@ function(head, req) {
         if (row.id) {
             if (row.id.substring(0,4) === 'node') {
                 id = row.id.substring(4);
-                lat = row.value.geometry.coordinates[1];
-                lon = row.value.geometry.coordinates[0];
+                lat = row.geometry.coordinates[1];
+                lon = row.geometry.coordinates[0];
                 changeset = row.value.properties.changeset;
                 user = row.value.properties.user;
                 uid = row.value.properties.uid;

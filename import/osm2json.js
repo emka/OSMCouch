@@ -1,3 +1,11 @@
+numdict2array = function(dict) {
+    var a = [];
+    for (i in dict) {
+       a.push(dict[i]);
+    }
+    return a;
+}
+
 Osmium.Callbacks.init = function() {
     jsonfile = Osmium.Output.CSV.open('bulk.json');
     jsonfile.print('{"docs":[');
@@ -14,58 +22,74 @@ Osmium.Callbacks.end = function() {
 Osmium.Callbacks.node = function() {
     var output = {
         _id: 'node'+this.id,
-        geom: this.geom.as_array,
-        version: this.version,
-        timestamp: this.timestamp,
-        uid: this.uid,
-        user: this.user,
-        changeset: this.changeset,
-        tags: this.tags
+        geom: this.geom.toArray(),
+        version: this.version
+        //timestamp: this.timestamp,
+        //uid: this.uid,
+        //user: this.user,
+        //changeset: this.changeset,
     };
+    if (JSON.stringify(this.tags) != '{}') // found no other way to check for empty tags with osmjs
+        output['tags'] = this.tags;
     jsonfile.print(JSON.stringify(output) + ',');
 }
 
 Osmium.Callbacks.way = function() {
-    if (is_area(this.tags)) return; // do not output polygons as LineString ways
+    var geom = this.geom.toArray();
+    if (is_closed(geom) && is_area(this.tags)) return; // do not output polygons as LineString ways
+    var numbered_members = this.nodes;
+    delete numbered_members['length'];
     var output = {
         _id: 'way'+this.id,
-        geom: this.geom.as_array,
+        geom: geom,
         version: this.version,
-        timestamp: this.timestamp,
-        uid: this.uid,
-        user: this.user,
-        changeset: this.changeset,
+        //timestamp: this.timestamp,
+        //uid: this.uid,
+        //user: this.user,
+        //changeset: this.changeset,
         tags: this.tags,
-        nodes: this.nodes
+        nodes: numdict2array(numbered_members)
     };
     jsonfile.print(JSON.stringify(output) + ',');
 }
 
 Osmium.Callbacks.relation = function() {
     if (is_multipolygon(this.tags)) return; // do not output MultiPolygons as relations
+    var numbered_members = this.members;
+    delete numbered_members['length'];
     var output = {
         _id: 'relation'+this.id,
-        members: this.members,
         version: this.version,
-        timestamp: this.timestamp,
-        uid: this.uid,
-        user: this.user,
-        changeset: this.changeset,
-        tags: this.tags
+        //timestamp: this.timestamp,
+        //uid: this.uid,
+        //user: this.user,
+        //changeset: this.changeset,
+        tags: this.tags,
+        members: numdict2array(numbered_members)
     };
     jsonfile.print(JSON.stringify(output) + ',');
 }
 
-Osmium.Callbacks.multipolygon = function() {
-    if (this.from === 'way' && !is_area(this.tags)) return; // do not output non-area ways as Polygon
-    var geom = this.geom.as_array;
+Osmium.Callbacks.area = function() {
+    if (this.from === 'way' && !(is_area(this.tags))) return; // do not output non-area ways as Polygon
+    var geom = this.geom.toArray();
     if (geom != undefined) {
+        var numbered_members = this.members;
+        delete numbered_members['length'];
         var output = {
             _id: this.from+this.id,
             geom: geom,
-            timestamp: this.timestamp,
+            version: this.version,
+            //timestamp: this.timestamp,
+            //uid: this.uid,
+            //user: this.user,
+            //changeset: this.changeset,
             tags: this.tags
         };
+        if (this.from === 'way')
+            output['nodes'] = numdict2array(numbered_members);
+        else
+            output['members'] = numdict2array(numbered_members);
         jsonfile.print(JSON.stringify(output) + ',');
     }
 }

@@ -2,16 +2,11 @@
 
 # OpenStreetMap .osm/.pbf/.osc to GeoCouch importer/updater
 
-'''
-known issues:
-    * multiple versions in one file will lead to multiple documents sharing the same old rev
-'''
 
 from imposm.parser import OSMParser
 import imposm.geom
 from imposm.multipolygon import ContainsRelationBuilder
-from redish import proxy # store cache in Redis
-#import couchdb
+import couchdb.client
 import anyjson
 import geojson
 
@@ -38,186 +33,197 @@ class OSMElem(object):
         self.members = members
         self.inserted = False
 
+# override imposm.base CoordsCache
 class CoordsCache(object):
-    def __init__(self, cache):
-        self.cache = cache
+    def __init__(self, db):
+        self.db = db
     def get_coords(self, coord_ids):
         coords = []
         for coord_id in coord_ids:
-            coord_cid = 'coord{}'.format(coord_id)
-            coords.append((float(self.cache[coord_cid]['lon']),float(self.cache[coord_cid]['lat'])))
+            print 'coord', coord_id
+            doc = self.db.get('node{}'.format(coord_id))
+            print doc
+            if doc:
+                coords.append(tuple(doc['geom']))
+            else:
+                return None # one or more coords not found
         return coords
 
+# override imposm.base WaysCache
 class WaysCache(object):
-    def __init__(self, cache):
-        self.cache = cache
+    def __init__(self, db):
+        self.db = db
     def get(self, way_id):
-        refs=map(int,self.cache[way_id])
-        return OSMElem(way_id, refs=refs)
+        print 'way', way_id
+        doc = self.db.get('way{}'.format(way_id))
+        print doc
+        if doc:
+            return OSMElem(way_id, refs=doc['nodes'])
+        else:
+            return None # way not found
+
+
+class DependenciesCache(object):
+    '''Get dependecies and reverse dependencies from CouchDB'''
+    def __init__(self, db):
+        self.db = db
+        self.revdeps = self.db.view('_design/maintenance/_view/revdeps', lambda row: row['value'])
+    def get_reverse_dependencies(self, docid):
+        print 'revdep', docid
+        return set(self.revdeps[docid])
+    def get_dependencies(self, docid):
+        print 'dep', docid
+        # TODO how to handle missing documents
+        if docid[0:3] == 'way':
+            return map('node{}'.format, self.db[docid]['nodes'])
+        elif docid[0:8] == 'relation':
+            deps = []
+            members =self.db[docid]['members']
+            for member in members:
+                if member['type'] == 'w':
+                    deps.append('way{}'.format(member['ref']))
+                elif member['type'] == 'n':
+                    deps.append('node{}'.format(member['ref']))
+                elif member['type'] == 'r':
+                    deps.append('relation{}'.format(member['ref']))
+            return deps
 
 class OSMCInterpreter(object):
-    rebuild_objects = set([])
-    check_if_node = set([])
-    def __init__(self, cache={}, dependencies_cache={}, reverse_dependencies_cache={}, ways_cache={}):
-        self.cache = cache
-        self.coords_cache = CoordsCache(cache)
-        self.ways_cache = WaysCache(ways_cache)
-        self.dependencies = dependencies_cache
-        self.reverse_dependencies = reverse_dependencies_cache
+    def __init__(self, db):
+        self.db = db
         self.linestring_builder = imposm.geom.LineStringBuilder()
         self.polygon_builder = imposm.geom.PolygonBuilder()
-    def coords_callback(self, coords):
-        for osm_id, lon, lat, version in coords:
-            cid = 'coord{}'.format(osm_id)
-            if cid not in self.cache:
-                # add coord to cache
-                self.cache[cid] = {'version':version, 'lon':lon, 'lat':lat}
-                #self.reverse_dependencies[cid] = set([]) # redis does not support creation of empty sets
-            elif int(version) > int(self.cache[cid]['version']):
-                # add coord to cache
-                self.cache[cid] = {'version':version, 'lon':lon, 'lat':lat}
-                # add reverse dependencies to rebuild list
-                if cid in self.reverse_dependencies:
-                    for revdep_id in self.reverse_dependencies[cid]:
-                        rebuild_objects.add(revdep_id)
-                # might have had tags in previous and now just be a coord
-                self.check_if_node.add(osm_id)
+        self.coords_cache = CoordsCache(self.db)
+        self.ways_cache = WaysCache(self.db)
+        self.dependencies_cache = DependenciesCache(self.db)
+        self.rebuild_objects = set([])
+
+    def is_multipolygon(self,tags):
+        return 'type' in tags and (tags['type'] == 'multipolygon' or tags['type'] == 'border')
+
+    def is_area(self,tags):
+        if 'area' in tags and tags['area'] == 'yes': return True
+        if 'building' in tags: return True
+        if 'shop' in tags: return True
+        if 'boundary' in tags: return True
+        if 'landuse'  in tags: return True
+        if 'place' in tags: return True
+        if 'waterway' in tags and tags['waterway'] == 'riverbank': return True
+        if 'sport' in tags and not (tags['sport'] == 'free_flying' or tags['sport'] == 'toboggan' or tags['sport'] == 'water_ski'): return True
+        if 'craft' in tags: return True
+        if 'emergency' in tags: return True
+        if 'historic' in tags: return True
+        if 'military' in tags: return True
+        if 'natural' in tags and not (tags['natural'] == 'coastline' or tags['natural'] == 'cliff'): return True
+        if 'tourism' in tags and not tags['tourism'] == 'artwork': return True
+        if 'ele' in tags: return True
+        if 'geological' in tags: return True
+        return False
 
     def nodes_callback(self, nodes):
         for osm_id, tags, lonlat, version in nodes:
-            self.check_if_node.discard(osm_id) # yes, it is a node
-            lon, lat = lonlat
             cid = 'node{}'.format(osm_id)
-            if cid not in self.cache:
-                self.cache[cid] = {'version':version, 'rev':''}
-                # write document without rev
-                self.write_document(anyjson.serialize({'_id':cid,'type':'Feature','geometry':{'type':'Point','coordinates':[lon,lat]},'properties':tags}))
-            elif int(version) > int(self.cache[cid]['version']):
-                self.cache[cid]['version'] = version
-                self.write_document(anyjson.serialize({'_id':cid,'_rev':self.cache[cid]['rev'],'type':'Feature','geometry':{'type':'Point','coordinates':[lon,lat]},'properties':tags}))
-                # do not add reverse dependencies to rebuild list, dependencies are on coords
+            doc = self.db.get(cid)
+            if not doc or version > doc['version']:
+                if tags:
+                    if doc:
+                        self.write_document({'_id':cid, '_rev':doc['_rev'],'geom':lonlat,'version':version,'tags':tags})
+                        self.rebuild_objects.update(self.dependencies_cache.get_reverse_dependencies(cid))
+                    else:
+                        self.write_document({'_id':cid,'geom':lonlat,'version':version,'tags':tags})
+                else:
+                    if doc:
+                        self.write_document({'_id':cid, '_rev':doc['_rev'],'geom':lonlat,'version':version})
+                        self.rebuild_objects.update(self.dependencies_cache.get_reverse_dependencies(cid))
+                    else:
+                        self.write_document({'_id':cid,'geom':lonlat,'version':version})
 
     def ways_callback(self, ways):
         for osm_id, tags, coord_ids, version in ways:
             cid = 'way{}'.format(osm_id)
-            if cid not in self.cache:
-                osm_elem = OSMElem(osm_id, coords=self.coords_cache.get_coords(coord_ids))
-                try:
-                    # FIXME depending on tags, use polygon builder instead
-                    geom = self.linestring_builder.build_checked_geom(osm_elem)
-                except imposm.geom.InvalidGeometryError:
-                    return # do not change object
-                self.cache[cid] = {'version':version,'rev':''}
-                self.ways_cache.cache[osm_id] = coord_ids
-                #self.reverse_dependencies[cid] = set([]) # Redis does not support empty sets
-                self.write_document(anyjson.serialize({'_id':cid,'type':'Feature','geometry':geojson.loads(geojson.dumps(geom)),'properties':tags}))
-                # store dependencies
-                coord_cids = map(lambda x: 'coord{}'.format(x), coord_ids)
-                self.dependencies[cid] = set(coord_cids)
-                # store reverse dependencies
-                for coord_id in coord_ids:
-                    coord_cid = 'coord{}'.format(coord_id)
-                    if coord_cid in self.reverse_dependencies:
-                        self.reverse_dependencies[coord_cid].add(cid)
+            doc = self.db.get(cid)
+            if not doc or version > doc['version']:
+                coords = self.coords_cache.get_coords(coord_ids)
+                if coords:
+                    osm_elem = OSMElem(osm_id, coords=coords)
+                    try:
+                        if self.is_area(tags):
+                            geom = self.polygon_builder.build_checked_geom(osm_elem)
+                        else:
+                            geom = self.linestring_builder.build_checked_geom(osm_elem)
+                    except imposm.geom.InvalidGeometryError:
+                        continue # do not change object
+                    geometry = geojson.loads(geojson.dumps(geom))
+                    if doc:
+                        self.write_document({'_id':cid, '_rev':doc['_rev'], 'geom':geometry['coordinates'],'version':version, 'tags':tags, 'nodes':coord_ids})
+                        self.rebuild_objects.update(self.dependencies_cache.get_reverse_dependencies(cid))
                     else:
-                        self.reverse_dependencies[coord_cid] = {cid,}
-
-            elif int(version) > int(self.cache[cid]['version']):
-                osm_elem = OSMElem(osm_id, coords=self.coords_cache.get_coords(coord_ids))
-                try:
-                    # FIXME depending on tags, use polygon builder instead
-                    geom = self.linestring_builder.build_checked_geom(osm_elem)
-                except imposm.geom.InvalidGeometryError:
-                    return # do not change object
-                self.cache[cid]['version'] = version
-                self.ways_cache.cache[osm_id] = coord_ids
-                # write document with rev
-                self.write_document(anyjson.serialize({'_id':cid,'_rev':self.cache[cid]['rev'],'type':'Feature','geometry':{'type':geomtype,'coordinates':geom},'properties':tags}))
-                # delete old reverse dependencies
-                for coord_cid in self.dependencies[cid]:
-                    self.reverse_dependencies[coord_cid].remove(cid)
-                # update dependencies
-                coord_cids = map(lambda x: 'coord{}'.format(x), coord_ids)
-                self.dependencies[cid] = set(coord_cids)
-                # store reverse dependencies
-                for coord_id in coord_ids:
-                    coord_cid = 'coord{}'.format(coord_id)
-                    if coord_cid in self.reverse_dependencies:
-                        self.reverse_dependencies[coord_cid].add(cid)
-                    else:
-                        self.reverse_dependencies[coord_cid] = {cid,}
+                        self.write_document({'_id':cid,'geom':geometry['coordinates'],'version':version, 'tags':tags, 'nodes':coord_ids})
 
     def relations_callback(self, relations):
         for osm_id, tags, members, version in relations:
             cid = 'relation{}'.format(osm_id)
             relation = OSMElem(osm_id, tags=tags, members=members)
-            if cid not in self.cache or int(version) > int(self.cache[cid]['version']):
-                builder = ContainsRelationBuilder(relation, self.ways_cache, self.coords_cache)
-                try:
-                    builder.build()
-                except imposm.geom.IncompletePolygonError:
-                    return # do not change object
-                geom = builder.relation.geom
-                if cid not in self.cache:
-                    self.cache[cid] = {'version':version,'rev':''}
-                    self.write_document(anyjson.serialize({'_id':cid,'type':'Feature','geometry':geojson.loads(geojson.dumps(geom)),'properties':tags}))
-                else:
-                    self.cache[cid]['version'] = version
-                    self.write_document(anyjson.serialize({'_id':cid,'_rev':self.cache[cid]['rev'],'type':'Feature','geometry':geojson.loads(geojson.dumps(geom)),'properties':tags}))
-                    # delete reverse dependencies
-                    for member_cid in self.dependencies[cid]:
-                        self.reverse_dependencies[member_cid].remove(cid)
+            doc = self.db.get(cid)
+            if not doc or version > doc['version']:
+                # re-format members
+                memberdicts = []
+                for member_ref, member_type, member_role in members:
+                    memberdicts.append({'ref':member_ref,'type':member_type[0],'role':member_role})
 
-                deps = [] # dependencies
-                for member_osm_id, member_type, member_role in members:
-                    member_cid = '{}{}'.format(member_type, member_osm_id)
-                    deps.append(member_cid)
-                    # store reverse dependencies
-                    if member_cid in self.reverse_dependencies:
-                        self.reverse_dependencies[member_cid].add(cid)
-                    else:
-                        self.reverse_dependencies[member_cid] = {cid,}
-                # store dependencies
-                self.dependencies[cid] = set(deps)
-
-
-    def write_document(self, docstring):
-        print(docstring)
-        # TODO: write to CouchDB, store returned _rev in cache
-
-
-def main(filename):
-    # initialize Redis cache
-    cache = proxy.Proxy()
-    cache.flushdb() # delete cache, TODO remove
+                if self.is_multipolygon(tags):
+                    builder = ContainsRelationBuilder(relation, self.ways_cache, self.coords_cache)
+                    try:
+                        builder.build()
+                    except imposm.geom.IncompletePolygonError:
+                        continue # do not change object
+                    geom = builder.relation.geom
     
-    interpreter = OSMCInterpreter(cache=cache, dependencies_cache=cache.keyspace('%s:deps'), reverse_dependencies_cache=cache.keyspace('%s:revdeps'), ways_cache=cache.keyspace('way%d:coords'))
+                    geometry = geojson.loads(geojson.dumps(geom))
+                    if doc:
+                        self.write_document({'_id':cid, '_rev':doc['_rev'],'geom':geometry['coordinates'], 'version':version, 'tags':tags, 'members':memberdicts})
+                    else:
+                        self.write_document({'_id':cid, 'geom':geometry['coordinates'], 'version':version, 'tags':tags, 'members':memberdicts})
+                else:
+                    if doc:
+                        self.write_document({'_id':cid, '_rev':doc['_rev'], 'version':version, 'tags':tags, 'members':memberdicts})
+                    else:
+                        self.write_document({'_id':cid, 'version':version, 'tags':tags, 'members':memberdicts})
+                # TODO when relations containing relations are supported, rebuild reverse dependencies
 
-    parser = OSMParser(coords_callback=interpreter.coords_callback,nodes_callback=interpreter.nodes_callback)
+
+
+    def write_document(self, doc):
+        print(anyjson.serialize(doc))
+        self.db.save(doc)
+        # TODO: write to CouchDB
+
+
+def main(filename, server_url, dbname):
+    server = couchdb.client.Server(server_url)
+    if dbname in server:
+        db = server[dbname]
+    else:
+        db = server.create(dbname)
+
+    interpreter = OSMCInterpreter(db)
+
+    parser = OSMParser(nodes_callback=interpreter.nodes_callback)
     parser.parse(filename)
     parser = OSMParser(ways_callback=interpreter.ways_callback)
     parser.parse(filename)
     parser = OSMParser(relations_callback=interpreter.relations_callback)
     parser.parse(filename)
     
-    # delete nodes that became coords only
-    for osm_id in interpreter.check_if_node:
-        nodeid = 'node{}'.format(osm_id)
-        coordid = 'coord{}'.format(osm_id)
-        if nodeid in cache: # node exists
-            if int(cache[nodeid]['version']) < int(cache[coordid]['version']): # updated OSM node has no tags
-                pass
-                # delete old node
-                interpreter.write_document('''{{'_id':'{id}','_rev':'{rev}','_deleted':true}}'''.format(id=nodeid,rev=cache[nodeid]['rev']))
 
 def usage():
-    print('Usage: '+sys.argv[0]+' filename.ext\n\nwhere ext can be .osm, .osm.pbf, .osc')
+    print('Usage: '+sys.argv[0]+' filename.ext http://user:password@host:5984/ dbname\n\nwhere ext can be .osm, .osm.pbf, .osc')
 
 if __name__ == '__main__':
     import sys
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 4:
         usage()
     else:
         import logging
         logging.basicConfig(filename='osmcouch-importer.log', level=logging.DEBUG)
-        main(sys.argv[1])
+        main(sys.argv[1], sys.argv[2], sys.argv[3])
