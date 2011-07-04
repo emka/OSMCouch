@@ -46,20 +46,20 @@ is_poi = function(tags) {
     if (tags['shop']) return true;
     if (tags['tourism']) return true;
     if (tags['leisure']) return true;
+    if (tags['highway'] && (tags['highway'] === 'emergency_access_point')) return true;
 
     return false;
 }
 
 Osmium.Callbacks.init = function() {
     jsonfile = Osmium.Output.CSV.open('pois.json');
+    timestamp = new Date();
     jsonfile.print('{"docs":[');
-    
-    var timestamp = new Date();
-    var output = { _id: 'meta', timestamp: timestamp.toString() }
-    jsonfile.print(JSON.stringify(output));
 }
 
 Osmium.Callbacks.end = function() {
+    var output = { _id: 'meta', timestamp: timestamp.toString() }
+    jsonfile.print(JSON.stringify(output));
     jsonfile.print(']}');
     jsonfile.close();
 }
@@ -76,8 +76,7 @@ Osmium.Callbacks.node = function() {
         version: this.version,
         properties: this.tags
     };
-    jsonfile.print(',');
-    jsonfile.print(JSON.stringify(output));
+    jsonfile.print(JSON.stringify(output)+',');
 }
 
 Osmium.Callbacks.way = function() {
@@ -93,8 +92,7 @@ Osmium.Callbacks.way = function() {
             version: this.version,
             properties: this.tags
         };
-        jsonfile.print(',');
-        jsonfile.print(JSON.stringify(output));
+        jsonfile.print(JSON.stringify(output)+',');
     }
 }
 
@@ -116,7 +114,6 @@ Osmium.Callbacks.multipolygon = function() {
             },
             properties: this.tags
         };
-        jsonfile.print(',');
-        jsonfile.print(JSON.stringify(output));
+        jsonfile.print(JSON.stringify(output)+',');
     }
 }

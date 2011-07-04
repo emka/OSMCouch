@@ -459,6 +459,11 @@
         "collection times": "Leerungszeiten",
         "fax": "Fax",
         "website": "Webseite",
-        "Loading objects": "Lade Objekte"
+        "Loading objects": "Lade Objekte",
+        "loading": "lade",
+        "show": "anzeigen",
+        "Browse on OSM": "Bei OSM betrachten",
+        "Map": "Karte",
+        "List of objects on this map": "Liste der Objekte auf dieser Karte"
     }
 }

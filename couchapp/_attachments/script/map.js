@@ -8,7 +8,7 @@ var parser = null;
 function initializeMap() {
     smerc = new OpenLayers.Projection("EPSG:900913");
     wgs84 = new OpenLayers.Projection("EPSG:4326");
-    OpenLayers.ImgPath = "http://mitja.kleider.name/osm/openlayers/img/";
+    OpenLayers.ImgPath = "images/openlayers/";
     permalinkCtrl = new OpenLayers.Control.Permalink();
     map = new OpenLayers.Map("map",{
         allOverlays: false,
@@ -55,7 +55,7 @@ function addIconToFeature(feature) {
     }
 
     if (icon && feature.geometry.CLASS_NAME === "OpenLayers.Geometry.Point") {
-         feature.style = { externalGraphic: 'http://poitools.openstreetmap.de/map/2011/images/icons/'+icon,
+         feature.style = { externalGraphic: 'images/icons/'+icon,
                            graphicWidth: 20,
                            graphicHeight: 20,
                            graphicYOffset: -10,
@@ -82,16 +82,28 @@ function createPOILayer(name, query) {
         }
         else {
             index = 'amenities';
-            filter = '?amenity='+value;
+            if (value != '' && value != '*')
+                filter = '?amenity='+value;
         }
     }
     else if (key === 'tourism') {
         index = 'tourism';
-        filter = '?tourism='+value;
+        if (value != '' && value != '*')
+            filter = '?tourism='+value;
+    }
+    else if (key === 'leisure') {
+        index = 'leisure';
+        if (value != '' && value != '*')
+            filter = '?leisure='+value;
     }
     else if (key === 'shop') {
         index = 'shops';
-        filter = '?shop='+value;
+        if (value != '' && value != '*')
+            filter = '?shop='+value;
+    }
+    else if (key === 'highway' && value === 'emergency_access_point')
+    {
+        index = 'emergency';
     }
     else {
         alert("Sorry, this key is not supported.");
@@ -110,7 +122,7 @@ function createPOILayer(name, query) {
 
     layer = new OpenLayers.Layer.Vector(name, {
         projection: new OpenLayers.Projection("EPSG:4326"),
-//      maxResolution: 10.0,
+        maxResolution: 155.0,
         visibility: true,
         strategies: [new OpenLayers.Strategy.BBOX({ratio: 2.5})],
         protocol: new OpenLayers.Protocol.HTTP({
@@ -182,7 +194,7 @@ function getPopupContent(feature) {
             html += '<p class="wikipedia"></p>';
     }
 
-    html +='<div class="osm"><a href="http://www.openstreetmap.org/browse/'+type+'/'+osm_id+'">Browse on OSM</a> <a href="?'+type+'='+osm_id+'">Permalink</a></div></div>';
+    html +='<div class="osm"><a href="http://www.openstreetmap.org/browse/'+type+'/'+osm_id+'">'+_('Browse on OSM')+'</a> <a href="?'+type+'='+osm_id+'&lang='+lang+'">'+_('Permalink')+'</a></div></div>';
     $("#objects").append(html);
 
     localize_wikipedia(tags, type, osm_id, lang);
@@ -206,6 +218,9 @@ $(document).ready(function(){
     $.getJSON('locales/'+lang+'.json', function(data) {
         if (data.translations) {
             translations = data.translations;
+            $('#listlink').text(_('List of objects on this map'));
+            $('#submit').attr('value', _('show'));
+            $('#loading').html('<img src="images/throbber.gif" alt=""> '+_('loading'));
         }
         if (data.prefixes) {
             prefixes = data.prefixes;
@@ -229,7 +244,9 @@ $(document).ready(function(){
         if (overlay) {
             overlay.events.register("loadstart", overlay, function() { $("#loading").show(); });
             overlay.events.register("loadend", overlay, function() { $("#loading").hide(); });
-            overlay.events.register("move", overlay, function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('geojson','list')+sep+'bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show()});
+            update_listlink = function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('geojson','list')+sep+'lang='+lang+'&bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show()}
+            overlay.events.register("move", overlay, update_listlink);
+            overlay.events.register("zoomend", overlay, update_listlink);
             map.addLayer(overlay);
             selectCtrl = new OpenLayers.Control.SelectFeature(overlay,{toggle: true});
             var highlightCtrl = new OpenLayers.Control.SelectFeature(overlay, {
