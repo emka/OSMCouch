@@ -40,9 +40,7 @@ class CoordsCache(object):
     def get_coords(self, coord_ids):
         coords = []
         for coord_id in coord_ids:
-            print 'coord', coord_id
-            doc = self.db.get('node{}'.format(coord_id))
-            print doc
+            doc = self.db.get('node{0}'.format(coord_id))
             if doc:
                 coords.append(tuple(doc['geom']))
             else:
@@ -54,9 +52,7 @@ class WaysCache(object):
     def __init__(self, db):
         self.db = db
     def get(self, way_id):
-        print 'way', way_id
-        doc = self.db.get('way{}'.format(way_id))
-        print doc
+        doc = self.db.get('way{0}'.format(way_id))
         if doc:
             return OSMElem(way_id, refs=doc['nodes'])
         else:
@@ -69,23 +65,21 @@ class DependenciesCache(object):
         self.db = db
         self.revdeps = self.db.view('_design/maintenance/_view/revdeps', lambda row: row['value'])
     def get_reverse_dependencies(self, docid):
-        print 'revdep', docid
         return set(self.revdeps[docid])
     def get_dependencies(self, docid):
-        print 'dep', docid
         # TODO how to handle missing documents
         if docid[0:3] == 'way':
-            return map('node{}'.format, self.db[docid]['nodes'])
+            return map('node{0}'.format, self.db[docid]['nodes'])
         elif docid[0:8] == 'relation':
             deps = []
             members =self.db[docid]['members']
             for member in members:
                 if member['type'] == 'w':
-                    deps.append('way{}'.format(member['ref']))
+                    deps.append('way{0}'.format(member['ref']))
                 elif member['type'] == 'n':
-                    deps.append('node{}'.format(member['ref']))
+                    deps.append('node{0}'.format(member['ref']))
                 elif member['type'] == 'r':
-                    deps.append('relation{}'.format(member['ref']))
+                    deps.append('relation{0}'.format(member['ref']))
             return deps
 
 class OSMCInterpreter(object):
@@ -97,6 +91,7 @@ class OSMCInterpreter(object):
         self.ways_cache = WaysCache(self.db)
         self.dependencies_cache = DependenciesCache(self.db)
         self.rebuild_objects = set([])
+        self.write_cache = []
 
     def is_multipolygon(self,tags):
         return 'type' in tags and (tags['type'] == 'multipolygon' or tags['type'] == 'border')
@@ -122,7 +117,7 @@ class OSMCInterpreter(object):
 
     def nodes_callback(self, nodes):
         for osm_id, tags, lonlat, version in nodes:
-            cid = 'node{}'.format(osm_id)
+            cid = 'node{0}'.format(osm_id)
             doc = self.db.get(cid)
             if not doc or version > doc['version']:
                 if tags:
@@ -140,7 +135,7 @@ class OSMCInterpreter(object):
 
     def ways_callback(self, ways):
         for osm_id, tags, coord_ids, version in ways:
-            cid = 'way{}'.format(osm_id)
+            cid = 'way{0}'.format(osm_id)
             doc = self.db.get(cid)
             if not doc or version > doc['version']:
                 coords = self.coords_cache.get_coords(coord_ids)
@@ -162,7 +157,7 @@ class OSMCInterpreter(object):
 
     def relations_callback(self, relations):
         for osm_id, tags, members, version in relations:
-            cid = 'relation{}'.format(osm_id)
+            cid = 'relation{0}'.format(osm_id)
             relation = OSMElem(osm_id, tags=tags, members=members)
             doc = self.db.get(cid)
             if not doc or version > doc['version']:
@@ -191,15 +186,84 @@ class OSMCInterpreter(object):
                         self.write_document({'_id':cid, 'version':version, 'tags':tags, 'members':memberdicts})
                 # TODO when relations containing relations are supported, rebuild reverse dependencies
 
+    def delete_nodes_callback(self, nodes):
+        for osm_id, version in nodes:
+            cid = 'node{0}'.format(osm_id)
+            doc = self.db.get(cid)
+            if doc and version > doc['version']:
+                self.delete_document(doc)
 
+    def delete_ways_callback(self, ways):
+        for osm_id, version in ways:
+            cid = 'way{0}'.format(osm_id)
+            doc = self.db.get(cid)
+            if doc and version > doc['version']:
+                self.delete_document(doc)
+
+    def delete_relations_callback(self, relations):
+        for osm_id, version in relations:
+            cid = 'relation{0}'.format(osm_id)
+            doc = self.db.get(cid)
+            if doc and version > doc['version']:
+                self.delete_document(doc)
+
+    def delete_document(self, doc):
+        #self.db.delete(doc)
+        self.write_cache.append({'_id':doc['_id'], '_rev':doc['_rev'], '_deleted':True})
+        if len(self.write_cache) > 1000:
+            self.write_bulk()
 
     def write_document(self, doc):
-        print(anyjson.serialize(doc))
-        self.db.save(doc)
-        # TODO: write to CouchDB
+        #self.db.save(doc)
+        self.write_cache.append(doc)
+        if len(self.write_cache) > 1000:
+            self.write_bulk()
+
+    def write_bulk(self):
+        self.db.update(self.write_cache)
+        self.write_cache = []
+
+    def __del__(self):
+        # write cached documents before rebuilding objects
+        if self.write_cache:
+            self.write_bulk()
+        while self.rebuild_objects:
+            cid = self.rebuild_objects.pop()
+            doc = self.db.get(cid)
+            if cid[0:3] == 'way' and doc:
+                coords = self.coords_cache.get_coords(doc['nodes'])
+                if coords:
+                    osm_elem = OSMElem(osm_id, coords=coords)
+                    try:
+                        if self.is_area(doc['tags']):
+                            geom = self.polygon_builder.build_checked_geom(osm_elem)
+                        else:
+                            geom = self.linestring_builder.build_checked_geom(osm_elem)
+                    except imposm.geom.InvalidGeometryError:
+                        continue # do not change object
+                    geometry = geojson.loads(geojson.dumps(geom))
+                    doc['geom'] = geometry['coordinates']
+                    self.write_document(doc) # cached write is fine as dependencies did not change
+                    self.rebuild_objects.update(self.dependencies_cache.get_reverse_dependencies(cid)) 
+            elif cid[0:8] == 'relation' and doc:
+                if self.is_multipolygon(doc['tags']):
+                    relation = OSMElem(int(cid[8:]), tags=doc['tags'], members=doc['members'])
+                    builder = ContainsRelationBuilder(relation, self.ways_cache, self.coords_cache)
+                    try:
+                        builder.build()
+                    except imposm.geom.IncompletePolygonError:
+                        continue # do not change object
+                    geom = builder.relation.geom
+    
+                    geometry = geojson.loads(geojson.dumps(geom))
+                    doc['geom'] = geometry['coordinates']
+                    self.write_document(doc)
+                    # TODO when relations containing relations are supported, rebuild reverse dependencies
+        if self.write_cache:
+            self.write_bulk(self.write_cache)
 
 
-def main(filename, server_url, dbname):
+def main(server_url, dbname, filename):
     server = couchdb.client.Server(server_url)
     if dbname in server:
         db = server[dbname]
@@ -208,7 +272,7 @@ def main(filename, server_url, dbname):
 
     interpreter = OSMCInterpreter(db)
 
-    parser = OSMParser(nodes_callback=interpreter.nodes_callback)
+    parser = OSMParser(nodes_callback=interpreter.nodes_callback, delete_nodes_callback=interpreter.delete_nodes_callback, delete_ways_callback=interpreter.delete_ways_callback, delete_relations_callback=interpreter.delete_relations_callback)
     parser.parse(filename)
     parser = OSMParser(ways_callback=interpreter.ways_callback)
     parser.parse(filename)
@@ -217,7 +281,7 @@ def main(filename, server_url, dbname):
     
 
 def usage():
-    print('Usage: '+sys.argv[0]+' filename.ext http://user:password@host:5984/ dbname\n\nwhere ext can be .osm, .osm.pbf, .osc')
+    print('Usage: '+sys.argv[0]+' http://user:password@host:5984/ dbname filename.ext\n\nwhere ext can be .osm, .osm.pbf, .osc')
 
 if __name__ == '__main__':
     import sys
