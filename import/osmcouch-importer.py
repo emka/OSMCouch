@@ -2,6 +2,7 @@
 
 # OpenStreetMap .osm/.pbf/.osc to GeoCouch importer/updater
 
+# TODO check member type 'way' or 'w'
 
 from imposm.parser import OSMParser
 import imposm.geom
@@ -32,8 +33,21 @@ class OSMElem(object):
         self.members = members
         self.inserted = False
 
-# override imposm.base CoordsCache
-class CoordsCache(object):
+class CoordsCacheView(object):
+    '''Get way node coordinates with a single HTTP request.'''
+    def __init__(self, db):
+        self.db = db
+    def get_coords(self, coord_ids):
+        docs = self.db.view('_all_docs', lambda row: None if 'error' in row else row['doc']['geom'], include_docs=True, keys=map('node{0}'.format, coord_ids))
+        coords = docs.rows
+        if None in coords:
+            return None # one or more coords not found
+        else:
+            return coords
+
+class CoordsCacheSingle(object):
+    '''Get way node coordinates with multiple single node HTTP requests.
+    This method is faster if nodes are probably missing.'''
     def __init__(self, db):
         self.db = db
     def get_coords(self, coord_ids):
@@ -45,6 +59,10 @@ class CoordsCache(object):
             else:
                 return None # one or more coords not found
         return coords
+
+# override imposm.base CoordsCache
+class CoordsCache(CoordsCacheSingle):
+    pass
 
 # override imposm.base WaysCache
 class WaysCache(object):
@@ -82,8 +100,15 @@ class DependenciesCache(object):
             return deps
 
 class OSMCInterpreter(object):
-    def __init__(self, db):
-        self.db = db
+    def __init__(self, server_url, dbname):
+        server = couchdb.client.Server(server_url)
+        if dbname in server:
+            self.db = server[dbname]
+            self.initial_import = False
+        else:
+            self.db = server.create(dbname)
+            self.initial_import = True
+
         self.linestring_builder = imposm.geom.LineStringBuilder()
         self.polygon_builder = imposm.geom.PolygonBuilder()
         self.coords_cache = CoordsCache(self.db)
@@ -117,7 +142,7 @@ class OSMCInterpreter(object):
     def nodes_callback(self, nodes):
         for osm_id, tags, lonlat, version in nodes:
             cid = 'node{0}'.format(osm_id)
-            doc = self.db.get(cid)
+            doc = self.db.get(cid) if not self.initial_import else None
             if not doc or version > doc['version']:
                 if tags:
                     if doc:
@@ -135,7 +160,7 @@ class OSMCInterpreter(object):
     def ways_callback(self, ways):
         for osm_id, tags, coord_ids, version in ways:
             cid = 'way{0}'.format(osm_id)
-            doc = self.db.get(cid)
+            doc = self.db.get(cid) if not self.initial_import else None
             if not doc or version > doc['version']:
                 coords = self.coords_cache.get_coords(coord_ids)
                 if coords:
@@ -158,7 +183,7 @@ class OSMCInterpreter(object):
         for osm_id, tags, members, version in relations:
             cid = 'relation{0}'.format(osm_id)
             relation = OSMElem(osm_id, tags=tags, members=members)
-            doc = self.db.get(cid)
+            doc = self.db.get(cid) if not self.initial_import else None
             if not doc or version > doc['version']:
                 # re-format members
                 memberdicts = []
@@ -186,6 +211,7 @@ class OSMCInterpreter(object):
                 # TODO when relations containing relations are supported, rebuild reverse dependencies
 
     def delete_nodes_callback(self, nodes):
+        if self.initial_import: return
         for osm_id, version in nodes:
             cid = 'node{0}'.format(osm_id)
             doc = self.db.get(cid)
@@ -193,6 +219,7 @@ class OSMCInterpreter(object):
                 self.delete_document(doc)
 
     def delete_ways_callback(self, ways):
+        if self.initial_import: return
         for osm_id, version in ways:
             cid = 'way{0}'.format(osm_id)
             doc = self.db.get(cid)
@@ -200,6 +227,7 @@ class OSMCInterpreter(object):
                 self.delete_document(doc)
 
     def delete_relations_callback(self, relations):
+        if self.initial_import: return
         for osm_id, version in relations:
             cid = 'relation{0}'.format(osm_id)
             doc = self.db.get(cid)
@@ -207,18 +235,17 @@ class OSMCInterpreter(object):
                 self.delete_document(doc)
 
     def delete_document(self, doc):
-        #self.db.delete(doc)
         self.write_cache.append({'_id':doc['_id'], '_rev':doc['_rev'], '_deleted':True})
-        if len(self.write_cache) > 1000:
+        if len(self.write_cache) == 10000:
             self.write_bulk()
 
     def write_document(self, doc):
-        #self.db.save(doc)
         self.write_cache.append(doc)
-        if len(self.write_cache) > 1000:
+        if len(self.write_cache) == 10000:
             self.write_bulk()
 
     def write_bulk(self):
+        print 'writing {0} documents'.format(len(self.write_cache))
         self.db.update(self.write_cache)
         self.write_cache = []
 
@@ -232,7 +259,7 @@ class OSMCInterpreter(object):
             if cid[0:3] == 'way' and doc:
                 coords = self.coords_cache.get_coords(doc['nodes'])
                 if coords:
-                    osm_elem = OSMElem(osm_id, coords=coords)
+                    osm_elem = OSMElem(int(cid[3:]), coords=coords)
                     try:
                         if self.is_area(doc['tags']):
                             geom = self.polygon_builder.build_checked_geom(osm_elem)
@@ -259,22 +286,18 @@ class OSMCInterpreter(object):
                     self.write_document(doc)
                     # TODO when relations containing relations are supported, rebuild reverse dependencies
         if self.write_cache:
-            self.write_bulk(self.write_cache)
+            self.write_bulk()
 
 
 def main(server_url, dbname, filename):
-    server = couchdb.client.Server(server_url)
-    if dbname in server:
-        db = server[dbname]
-    else:
-        db = server.create(dbname)
-
-    interpreter = OSMCInterpreter(db)
+    interpreter = OSMCInterpreter(server_url, dbname)
 
     parser = OSMParser(nodes_callback=interpreter.nodes_callback, delete_nodes_callback=interpreter.delete_nodes_callback, delete_ways_callback=interpreter.delete_ways_callback, delete_relations_callback=interpreter.delete_relations_callback)
     parser.parse(filename)
+    interpreter.write_bulk()
     parser = OSMParser(ways_callback=interpreter.ways_callback)
     parser.parse(filename)
+    interpreter.write_bulk()
     parser = OSMParser(relations_callback=interpreter.relations_callback)
     parser.parse(filename)
     
