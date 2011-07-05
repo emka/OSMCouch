@@ -7,7 +7,6 @@ from imposm.parser import OSMParser
 import imposm.geom
 from imposm.multipolygon import ContainsRelationBuilder
 import couchdb.client
-import anyjson
 import geojson
 
 try: 
