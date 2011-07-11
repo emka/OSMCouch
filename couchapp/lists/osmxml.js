@@ -1,5 +1,5 @@
 /**
- * This function outputs OSM XML.
+ * This function outputs OSM XML. Requires a view that emits doc as value.
  * http://wiki.openstreetmap.org/wiki/XML#OSM_XML_file_format
  * http://wiki.openstreetmap.org/wiki/Data_Primitives
  * 
@@ -23,15 +23,15 @@ function(head, req) {
         if (row.id) {
             if (row.id.substring(0,4) === 'node') {
                 id = row.id.substring(4);
-                lat = row.geometry.coordinates[1];
-                lon = row.geometry.coordinates[0];
-                changeset = row.value.properties.changeset;
-                user = row.value.properties.user;
-                uid = row.value.properties.uid;
-                timestamp = row.value.properties.timestamp;
-                version = row.value.properties.version;
+                lon = row.geom[0];
+                lat = row.geom[1];
+                changeset = row.value.changeset;
+                user = row.value.user;
+                uid = row.value.uid;
+                timestamp = row.value.timestamp;
+                version = row.value.version;
                 send('  <node id="'+id+'" lat="'+lat+'" lon="'+lon+'" changeset="'+changeset+'" user="'+user+'" uid="'+uid+'" visible="true" timestamp="'+timestamp+'" version="'+version+'"');
-                tags = row.value.properties.tags;
+                tags = row.value.tags;
                 if (isEmpty(tags)) {
                     send('/>\n');
                 }
@@ -45,19 +45,17 @@ function(head, req) {
             }
             else if (row.id.substring(0,3) === 'way') {
                 id = row.id.substring(3);
-                lat = row.value.geometry.coordinates[1];
-                lon = row.value.geometry.coordinates[0];
-                changeset = row.value.properties.changeset;
-                user = row.value.properties.user;
-                uid = row.value.properties.uid;
-                timestamp = row.value.properties.timestamp;
-                version = row.value.properties.version;
+                changeset = row.value.changeset;
+                user = row.value.user;
+                uid = row.value.uid;
+                timestamp = row.value.timestamp;
+                version = row.value.version;
                 send('  <way id="'+id+'" visible="true" timestamp="'+timestamp+'" version="'+version+'" changeset="'+changeset+'" user="'+user+'" uid="'+uid+'">\n');
-                nodes = row.value.properties.nodes;
+                nodes = row.value.nodes;
                 for (var i=0; i<nodes.length; i++) {
                     send('    <nd ref="'+nodes[i]+'"/>\n');
                 }
-                tags = row.value.properties.tags;
+                tags = row.value.tags;
                 for (tag in tags) {
                     send('    <tag k="'+tag+'" v="'+tags[tag]+'"/>\n');
                 }
