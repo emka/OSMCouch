@@ -35,6 +35,11 @@ function initializeMap() {
             ])*/
     ]);
 
+    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(position){
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        map.setCenter(new OpenLayers.LonLat(longitude, latitude).transform(map.displayProjection, map.projection), 14);
+    });
     if (!map.getCenter()) map.setCenter(new OpenLayers.LonLat(9.93361629, 51.53558391).transform(map.displayProjection, map.projection), 14);
 
     map.events.register("zoomend", map, function() { if (popup) {map.removePopup(popup); popup.destroy(); popup=null;} });
