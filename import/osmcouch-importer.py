@@ -364,8 +364,9 @@ def main(server_url, dbname, filename):
     interpreter.handle_nodes()
     interpreter.write_bulk()
     
-    # query way nodes view once without stale to update it
-    interpreter.db.view('_design/maintenance/_view/nodes', None, key='banana').rows
+    if not interpreter.initial_import:
+        # query way nodes view once without stale to update it
+        interpreter.db.view('_design/maintenance/_view/nodes', None, key='banana').rows
 
     parser = OSMParser(ways_callback=interpreter.ways_callback)
     parser.parse(filename)
