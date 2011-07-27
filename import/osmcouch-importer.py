@@ -117,11 +117,18 @@ class OSMCInterpreter(object):
             self.initial_import = False
         else:
             self.db = server.create(dbname)
+            print('Do not forget to create maintenance views before they are queried!')
             self.initial_import = True
 
         self.linestring_builder = imposm.geom.LineStringBuilder()
         self.polygon_builder = imposm.geom.PolygonBuilder()
-        self.coords_cache = CoordsCache(self.db)
+        if self.initial_import:
+            # FIXME requires existing imposm_coords.cache
+            from imposm.cache import OSMCache
+            self.imposm_cache = OSMCache('.')
+            self.coords_cache = self.imposm_cache.coords_cache(mode='r')
+        else:
+            self.coords_cache = CoordsCache(self.db)
         self.ways_cache = WaysCache(self.db)
         self.dependencies_cache = DependenciesCache(self.db)
         self.rebuild_objects_cache = set([])
@@ -179,7 +186,9 @@ class OSMCInterpreter(object):
         if ways and not self.initial_import:
             #docs = dict(self.db.view('_all_docs', lambda row: (None,None) if 'doc' not in row or 'error' in row else (row['id'],row['doc']), include_docs=True, keys=map('way{0}'.format, zip(*ways)[0])).rows)
             # docs dict from nodes view contains all way nodes already
-            docs = dict(self.db.view('_design/maintenance/_view/nodes', lambda row: (row['value']['_id'],row['doc']) if row['value'] else (row['id'],row['doc']), include_docs=True, keys=map('way{0}'.format, zip(*ways)[0])).rows, stale='ok') 
+            docs = dict(self.db.view('_design/maintenance/_view/nodes', lambda row: (row['value']['_id'],row['doc']) if row['value'] else (row['id'],row['doc']), include_docs=True, keys=map('way{0}'.format, zip(*ways)[0])).rows, stale='ok')
+        else:
+            docs = {}
         for osm_id, tags, coord_ids, version in ways:
             cid = 'way{0}'.format(osm_id)
             doc = docs.get(cid) if not self.initial_import else None
@@ -189,16 +198,19 @@ class OSMCInterpreter(object):
                     doc['tags'] = tags
                     self.write_document(doc)
                 else:
-                    #coords = self.coords_cache.get_coords(coord_ids)
-                    # get coordinates from node documents in docs
-                    coords = []
-                    for osm_id in coord_ids:
-                        coord_doc = docs.get('node{0}'.format(osm_id))
-                        if coord_doc:
-                            coords.append(coord_doc['geom'])
-                        else:
-                            coords = None
-                            break
+                    if self.initial_import:
+                        coords = self.coords_cache.get_coords(coord_ids)
+                    else:
+                        # get coordinates from node documents in docs
+                        coords = []
+                        for osm_id in coord_ids:
+                            if docs:
+                                coord_doc = docs.get('node{0}'.format(osm_id)) or self.db.get('node{0}'.format(osm_id))
+                            if coord_doc:
+                                coords.append(coord_doc['geom'])
+                            else:
+                                coords = None
+                                break
 
                     if coords:
                         osm_elem = OSMElem(osm_id, coords=coords)
@@ -209,6 +221,7 @@ class OSMCInterpreter(object):
                                 geom = self.linestring_builder.build_checked_geom(osm_elem)
                         except imposm.geom.InvalidGeometryError:
                             continue # do not change object
+
                         geometry = geojson.loads(geojson.dumps(geom))
                         if doc:
                             self.write_document({'_id':cid, '_rev':doc['_rev'], 'geom':geometry['coordinates'],'version':version, 'tags':tags, 'nodes':coord_ids})
@@ -240,10 +253,19 @@ class OSMCInterpreter(object):
                         try:
                             builder.build()
                         except imposm.geom.IncompletePolygonError:
-                            continue # do not change object
+                            if self.initial_import:
+                                # write without geometry
+                                self.write_document({'_id':cid, 'version':version, 'tags':tags, 'members':memberdicts})
+                            continue # next relation
                         geom = builder.relation.geom
     
-                        geometry = geojson.loads(geojson.dumps(geom))
+                        try:
+                            geometry = geojson.loads(geojson.dumps(geom))
+                        except ValueError: # if geom is Polygon (not MultiPolygon), it has no '__geo_interface__'
+                            if self.initial_import:
+                                # write without geometry
+                                self.write_document({'_id':cid, 'version':version, 'tags':tags, 'members':memberdicts})
+                            continue
                         if doc:
                             self.write_document({'_id':cid, '_rev':doc['_rev'],'geom':geometry['coordinates'], 'version':version, 'tags':tags, 'members':memberdicts})
                         else:
@@ -291,18 +313,25 @@ class OSMCInterpreter(object):
 
     def delete_document(self, doc):
         self.write_cache.append({'_id':doc['_id'], '_rev':doc['_rev'], '_deleted':True})
-        if len(self.write_cache) == BULK_SIZE:
+        if len(self.write_cache) >= BULK_SIZE:
             self.write_bulk()
 
     def write_document(self, doc):
         self.write_cache.append(doc)
-        if len(self.write_cache) == BULK_SIZE:
+        if len(self.write_cache) >= BULK_SIZE:
             self.write_bulk()
 
-    def write_bulk(self):
+    def write_bulk(self, retry=0):
         if self.write_cache:
-            self.db.update(self.write_cache)
-            self.write_cache = []
+            try:
+                self.db.update(self.write_cache)
+            except AttributeError: # workaround python-couchdb error
+                if retry == 10:
+                    raise Exception('write retries failed')
+                self.write_bulk(retry+1)
+            else:
+                #print '+%d'%len(self.write_cache)
+		self.write_cache = []
 
     def rebuild_objects(self):
         # write cached documents before rebuilding objects
