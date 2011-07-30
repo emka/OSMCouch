@@ -23,7 +23,8 @@ var icons = {
             "emergency_access_point": "default.png",
             "emergency_phone": "default.png"
         }, "shop": {
-            "bakery": "bakery.png"
+            "bakery": "bakery.png",
+            "butcher": "butcher_color.png"
         }, "tourism": {
             "hotel": "hotel2.png"
         }, "vending": {
