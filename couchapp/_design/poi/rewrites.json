@@ -26,7 +26,7 @@
     },
     {
         "from": "",
-        "to": "index.html",
+        "to": "map.html",
         "method": "GET"
     },
     {

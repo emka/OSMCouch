@@ -1,0 +1,27 @@
+[
+    {
+        "from": "favicon.ico",
+        "to": "favicon.ico",
+        "method": "GET"
+    },
+    {
+        "from": "style/*",
+        "to": "style/*",
+        "method": "GET"
+    },
+    {
+        "from": "script/*",
+        "to": "script/*",
+        "method": "GET"
+    },
+    {
+        "from": "images/*",
+        "to": "images/*",
+        "method": "GET"
+    },
+    {
+        "from": "",
+        "to": "index.html",
+        "method": "GET"
+    }
+]
