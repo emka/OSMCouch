@@ -90,6 +90,7 @@ function(head, req) {
         html.push(format_address(tags));
         html.push(format_contact(tags));
         html.push(format_isil(tags));
+        html.push(format_times(tags));
 
         convert_wikipedia_tags(tags);
         if (tags['wikipedia']) {
