@@ -46,6 +46,6 @@
     },
     {
         "from": "object/*",
-        "to": "shows/geojson/*"
+        "to": "_show/geojson/*"
     }
 ]
