@@ -13,7 +13,7 @@ function initializeMap() {
     map = new OpenLayers.Map("map",{
         allOverlays: false,
         controls: [
-            new OpenLayers.Control.LayerSwitcher(),
+            new OpenLayers.Control.LayerSwitcher({'activeColor': 'black', 'roundedCornerColor': 'black'}),
             new OpenLayers.Control.Navigation(),
             new OpenLayers.Control.PanZoom(),
             permalinkCtrl
@@ -35,12 +35,7 @@ function initializeMap() {
             ])*/
     ]);
 
-    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(position){
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        map.setCenter(new OpenLayers.LonLat(longitude, latitude).transform(map.displayProjection, map.projection), 14);
-    });
-    if (!map.getCenter()) map.setCenter(new OpenLayers.LonLat(9.93361629, 51.53558391).transform(map.displayProjection, map.projection), 14);
+    if (!map.getCenter()) map.setCenter(new OpenLayers.LonLat(0, 45).transform(map.displayProjection, map.projection), 2);
 
     map.events.register("zoomend", map, function() { if (popup) {map.removePopup(popup); popup.destroy(); popup=null;} });
 }
@@ -236,6 +231,13 @@ $(document).ready(function(){
     });
     initializeMap();
     $('#listlink').hide()
+    if (!($.urlParam("lat") && $.urlParam("lon")) && !($.urlParam("node") || $.urlParam("way") || $.urlParam("relation"))) {
+        if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(position){
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            map.setCenter(new OpenLayers.LonLat(longitude, latitude).transform(map.displayProjection, map.projection), 14);
+        });
+    }
     parser = new OpenLayers.Format.JSON();
 
 
@@ -249,7 +251,7 @@ $(document).ready(function(){
         if (overlay) {
             overlay.events.register("loadstart", overlay, function() { $("#loading").show(); });
             overlay.events.register("loadend", overlay, function() { $("#loading").hide(); });
-            update_listlink = function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('geojson','list')+sep+'lang='+lang+'&bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show()}
+            update_listlink = function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('geojson','list')+sep+'lang='+lang+'&bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show(); }
             overlay.events.register("move", overlay, update_listlink);
             overlay.events.register("zoomend", overlay, update_listlink);
             map.addLayer(overlay);

@@ -9,3 +9,7 @@
     -webkit-border-radius:1em;
     border-radius:1em;
 }
+
+.olControlLayerSwitcher .layersDiv {
+    background-color:black !important;
+}
