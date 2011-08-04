@@ -20,8 +20,8 @@ function(head, req) {
 
         // query parameters (if any) must be present as tags
         for (var key in req.query) {
-            if (key === 'bbox')
-                continue; // skip bbox parameter
+            if (key === 'bbox' || key === 'callback')
+                continue; // skip parameter
             else if (!row.value[key] || ((req.query[key].indexOf('|') === -1) && !(row.value[key] === req.query[key] || req.query[key] === '' || req.query[key] === '*'))) { // tag is not present
                     omit = true;
                     break; // do not check further filter tags
