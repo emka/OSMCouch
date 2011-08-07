@@ -66,7 +66,7 @@ function addIconToFeature(feature) {
 }
 
 function createPOILayer(name, query) {
-    var index = null; // spatial index
+    var index; // spatial index
     var filter = ''; // tag filter
 
     var params = query.split('&');
@@ -110,6 +110,7 @@ function createPOILayer(name, query) {
         return null;
     }
 
+    params.push('stale=update_after'); // tell CouchDB to respond immediately and update index afterwards
     if (params.length > 1) {
         params.splice(0,1);
         if (filter === '') {
@@ -126,7 +127,7 @@ function createPOILayer(name, query) {
         visibility: true,
         strategies: [new OpenLayers.Strategy.BBOX({ratio: 2.5})],
         protocol: new OpenLayers.Protocol.HTTP({
-            url: 'geojson/'+index+filter,
+            url: 'collection/'+index+filter,
             format: new OpenLayers.Format.GeoJSON()
         }),
         preFeatureInsert: addIconToFeature
@@ -251,7 +252,7 @@ $(document).ready(function(){
         if (overlay) {
             overlay.events.register("loadstart", overlay, function() { $("#loading").show(); });
             overlay.events.register("loadend", overlay, function() { $("#loading").hide(); });
-            update_listlink = function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('geojson','list')+sep+'lang='+lang+'&bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show(); }
+            update_listlink = function() { var sep='&';if(this.protocol.url.indexOf('?')==-1) sep='?';$('#listlink').attr('href',this.protocol.url.replace('collection','list')+sep+'lang='+lang+'&bbox='+this.getExtent().transform(smerc,wgs84).toBBOX()); $('#listlink').show(); }
             overlay.events.register("move", overlay, update_listlink);
             overlay.events.register("zoomend", overlay, update_listlink);
             map.addLayer(overlay);

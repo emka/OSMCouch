@@ -35,7 +35,7 @@
         "method": "GET"
     },
     {
-        "from": "geojson/*",
+        "from": "collection/*",
         "to": "_spatial/_list/geojson/*",
         "method": "GET"
     },
