@@ -31,7 +31,7 @@ function(head, req) {
 
         // query parameters (if any) must be present as tags
         for (var key in req.query) {
-            if (key === 'bbox' || key === 'lang')
+            if (key === 'bbox' || key === 'lang' || key === 'stale' || key === 'callback')
                 continue; // skip this parameter
             else if (!row.value[key] || ((req.query[key].indexOf('|') === -1) && !(row.value[key] === req.query[key] || req.query[key] === '' || req.query[key] === '*'))) { // tag is not present
                     omit = true;
