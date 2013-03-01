@@ -20,7 +20,7 @@ Osmium.Callbacks.node = function() {
         type: "Feature",
         geometry: {
             type: "Point",
-            coordinates: this.geom.as_array
+            coordinates: this.geom.toArray()
         },
         properties: {
             version: this.version,
@@ -46,7 +46,7 @@ Osmium.Callbacks.way = function() {
         type: "Feature",
         geometry: {
             type: "LineString",
-            coordinates: this.geom.as_array
+            coordinates: this.geom.toArray()
         },
         properties: {
             version: this.version,
@@ -80,7 +80,7 @@ Osmium.Callbacks.relation = function() {
 }
 
 Osmium.Callbacks.multipolygon = function() {
-    var geom = this.geom.as_array;
+    var geom = this.geom.toArray();
     if (geom != undefined) {
         if (this.from === "way") {
             type = "Polygon";
